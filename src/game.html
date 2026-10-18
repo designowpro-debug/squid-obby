@@ -47,6 +47,23 @@
     align-items:center;justify-content:center;pointer-events:auto;touch-action:none;text-shadow:0 2px 0 #000}
   #jumpBtn.pressed{background:rgba(20,150,60,.95);transform:scale(.94)}
   #camHint{position:absolute;right:calc(30px + env(safe-area-inset-right));bottom:calc(165px + env(safe-area-inset-bottom));color:#fff;opacity:.7;font-size:14px;text-shadow:0 1px 2px #000}
+  #charScreen .cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .card{pointer-events:auto;cursor:pointer;width:min(29vw,250px);background:rgba(0,0,0,.45);border:4px solid #fff;border-radius:20px;padding:10px 10px 14px;
+    box-sizing:border-box;text-align:center;touch-action:manipulation;transition:transform .12s}
+  .card:active{transform:scale(.96)}
+  .card img{width:100%;aspect-ratio:6/7;object-fit:contain;background:linear-gradient(#8fd3ff,#e8c98a);border-radius:12px;display:block}
+  .card h2{margin:8px 0 4px;font-size:26px}
+  .card .row{display:flex;align-items:center;justify-content:space-between;font-size:15px;margin:3px 2px}
+  .card .bar{flex:1;margin-left:8px;height:10px;background:rgba(255,255,255,.25);border-radius:6px;overflow:hidden}
+  .card .bar i{display:block;height:100%;background:#ffd23f}
+  .card .ab{margin-top:6px;font-size:14px;line-height:1.4;min-height:40px}
+  .card .tag{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:10px;font-size:13px;font-weight:700}
+  #stam{width:120px;height:8px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;margin-top:4px}
+  #stam i{display:block;height:100%;width:100%;background:#ff9f2e}
+  #dashBtn{position:absolute;right:calc(160px + env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom));width:90px;height:90px;
+    border-radius:50%;background:rgba(255,159,46,.8);border:4px solid #fff;color:#fff;font-size:28px;font-weight:900;display:flex;
+    align-items:center;justify-content:center;pointer-events:auto;touch-action:none;text-shadow:0 2px 0 #000}
+  #dashBtn.pressed{background:rgba(220,110,10,.95);transform:scale(.94)}
   #restartTop{position:fixed;z-index:7;top:calc(10px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));font-size:15px;
     padding:8px 12px;border-radius:12px;border:2px solid #fff;background:rgba(0,0,0,.4);color:#fff;font-family:inherit;font-weight:700;touch-action:manipulation}
 </style>
@@ -54,25 +71,30 @@
 <body>
 <div id="app"></div>
 <div id="flash"></div>
-<div id="hudL" class="hud hidden"><div class="lv" id="lvName">第 1 關</div><div>💀 淘汰次數：<span id="deaths">0</span></div><div>⏱ 總時間：<span id="time">0.0</span> 秒</div></div>
+<div id="hudL" class="hud hidden"><div class="lv" id="lvName">第 1 關</div><div>💀 淘汰次數：<span id="deaths">0</span></div><div>⏱ 總時間：<span id="time">0.0</span> 秒</div><div>🧍 角色：<span id="charName">菜鳥</span></div><div id="stamWrap" class="hidden">⚡ 體力<div id="stam"><i id="stamFill"></i></div></div></div>
 <div id="msg" class="hud"></div>
 <button id="restartTop" class="hidden">↻ 重新開始</button>
-<div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint">拖曳畫面轉視角</div><div id="jumpBtn">跳</div></div>
+<div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint">拖曳畫面轉視角</div><div id="jumpBtn">跳</div><div id="dashBtn" class="hidden">衝</div></div>
 
 <div id="startScreen" class="screen">
   <div class="shapes">○△□</div>
   <h1>魷魚遊戲 闖關挑戰</h1>
-  <p>三道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b>，活著抵達終點！掉下去會回到檢查點 🚩</p>
-  <p>⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍、滑鼠拖曳轉動視角</p>
-  <p>📱 平板／手機：左下搖桿移動、右下「跳」按鈕、拖曳畫面轉動視角</p>
+  <p>五道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b> → <b>彈珠迴旋</b> → <b>魷魚決戰</b>，活著抵達終點！掉下去會回到檢查點 🚩</p>
+  <p>⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍（培根頭可二段跳）、Shift 衝刺（小咔啦）、滑鼠拖曳轉動視角</p>
+  <p>📱 平板／手機：左下搖桿移動、右下「跳」按鈕、「衝」按鈕（小咔啦）、拖曳畫面轉動視角</p>
   <button class="btn" id="startBtn">開始遊戲</button>
+</div>
+<div id="charScreen" class="screen hidden">
+  <h1 style="font-size:min(9vw,48px)">選擇角色</h1>
+  <p>點選一位角色開始挑戰（五道關卡）</p>
+  <div class="cards" id="cards"></div>
 </div>
 <div id="winScreen" class="screen hidden">
   <div class="shapes">🏆</div>
   <h1>恭喜通關！</h1>
   <p style="font-size:24px">總時間：<b id="winTime">0</b></p>
   <p style="font-size:24px">淘汰次數：<b id="winDeaths">0</b></p>
-  <button class="btn" id="againBtn">再玩一次</button>
+  <button class="btn" id="againBtn">再玩一次（重選角色）</button>
 </div>
 
 <script>/*THREE_JS*/</script>
@@ -142,12 +164,11 @@ function textTexture(text, fg='#fff', bg=null, w=128, h=64, font='bold 44px sans
 
 // blocky Roblox-style avatar, front faces +z
 function makeAvatar(opt={}){
-  const suit = opt.suit ?? 0x2e7d5b, skin = opt.skin ?? 0xffd23f, pants = opt.pants ?? suit;
+  const suit = opt.suit ?? 0x2e7d5b, skin = opt.skin ?? 0xffd23f, pants = opt.pants ?? suit, arms = opt.arms ?? suit, shoes = opt.shoes ?? 0xffffff;
   const g = new THREE.Group();
   const body = new THREE.Group(); g.add(body);
   const torso = box(1.0,1.1,0.55,suit,0,1.55,0,body);
-  box(0.12,1.1,0.57,0xffffff,0.36,1.55,0,body); // stripe
-  box(0.12,1.1,0.57,0xffffff,-0.36,1.55,0,body);
+  if (opt.stripes !== false){ box(0.12,1.1,0.57,0xffffff,0.36,1.55,0,body); box(0.12,1.1,0.57,0xffffff,-0.36,1.55,0,body); }
   const head = box(0.8,0.8,0.8,skin,0,2.5,0,body);
   if (opt.mask){
     box(0.84,0.84,0.84,0x111111,0,2.5,0,body);
@@ -159,11 +180,18 @@ function makeAvatar(opt={}){
     box(0.34,0.06,0.04,0x111111,0,2.33,0.41,body);
   }
   if (opt.hair) box(0.86,0.25,0.86,opt.hair,0,2.95,-0.02,body);
+  if (opt.bacon){ // Roblox "bacon hair": wavy strips
+    box(0.9,0.22,0.9,0x7a3b1f,0,2.98,0,body);
+    for (let i=-3;i<=3;i++){ const st = box(0.13,0.55,0.92,i%2?0xb5653a:0x7a3b1f,i*0.13,2.78,-0.02,body); st.rotation.z = (i%2?0.12:-0.12); }
+    box(0.9,0.75,0.14,0x7a3b1f,0,2.55,-0.43,body);
+    box(0.14,0.6,0.7,0xb5653a,-0.44,2.6,-0.1,body); box(0.14,0.6,0.7,0xb5653a,0.44,2.6,-0.1,body);
+  }
+  if (opt.cap){ box(0.88,0.28,0.88,opt.cap,0,3.0,0,body); box(0.88,0.07,0.45,opt.cap,0,2.88,0.6,body); box(0.3,0.3,0.05,0xffffff,0,3.02,0.45,body); }
   const mkLimb = (x,y,color,w=0.48) => { const p = new THREE.Group(); p.position.set(x,y,0); body.add(p); box(w,1.0,0.5,color,0,-0.5,0,p); return p; };
-  const armL = mkLimb(-0.75,2.1,suit,0.45), armR = mkLimb(0.75,2.1,suit,0.45);
+  const armL = mkLimb(-0.75,2.1,arms,0.45), armR = mkLimb(0.75,2.1,arms,0.45);
   box(0.45,0.25,0.5,skin,0,-0.9,0,armL); box(0.45,0.25,0.5,skin,0,-0.9,0,armR);
   const legL = mkLimb(-0.26,1.0,pants), legR = mkLimb(0.26,1.0,pants);
-  box(0.5,0.18,0.56,0xffffff,0,-0.92,0.04,legL); box(0.5,0.18,0.56,0xffffff,0,-0.92,0.04,legR);
+  box(0.5,0.18,0.56,shoes,0,-0.92,0.04,legL); box(0.5,0.18,0.56,shoes,0,-0.92,0.04,legR);
   if (opt.num){
     const tag = new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.4), new THREE.MeshBasicMaterial({map:textTexture(opt.num,'#fff',null),transparent:true}));
     tag.position.set(0,1.7,-0.29); tag.rotation.y = Math.PI; body.add(tag);
@@ -267,6 +295,10 @@ const jb = $('jumpBtn');
 jb.addEventListener('pointerdown', e => { jumpQueued = true; jb.classList.add('pressed'); e.preventDefault(); });
 const jbUp = () => jb.classList.remove('pressed');
 jb.addEventListener('pointerup', jbUp); jb.addEventListener('pointercancel', jbUp); jb.addEventListener('pointerleave', jbUp);
+const db = $('dashBtn');
+db.addEventListener('pointerdown', e => { sprintHeld = true; db.classList.add('pressed'); try{db.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); });
+const dbUp = () => { sprintHeld = false; db.classList.remove('pressed'); };
+db.addEventListener('pointerup', dbUp); db.addEventListener('pointercancel', dbUp);
 if (isTouch) $('touch').classList.add('on');
 
 // ---------- game state ----------
@@ -275,9 +307,32 @@ window.__game = G;
 let levelGroup = null, solids = [], dynamics = [], shards = [], sweepers = [];
 let levelUpdate = null, onRespawn = null;
 const player = { pos:new THREE.Vector3(), vel:new THREE.Vector3(), grounded:false, ground:null, dead:false, deadT:0, spawn:new THREE.Vector3(), facing:Math.PI, coyote:0, knock:0, checkpoint:null };
-const playerAvatar = makeAvatar({suit:0x16a8a0, skin:0xffd23f, pants:0x16a8a0, num:'456', hair:0x3b2a1a});
-scene.add(playerAvatar);
-playerAvatar.traverse(o => { if (o.isMesh) o.castShadow = true; });
+const CHARS = {
+  noob:  {name:'菜鳥',  move:6.0, jump:9.2,  dbl:false, sprint:0,
+          look:{suit:0x2a6fdb, arms:0xffd23f, skin:0xffd23f, pants:0x5fb83a, shoes:0x5fb83a, stripes:false, num:'001'},
+          spd:1, jmp:1, ab:'無特殊能力：走得特別慢、跳得低', tag:'困難模式', tagC:'#e8202a'},
+  bacon: {name:'培根頭', move:8.0, jump:12.0, dbl:true, sprint:0,
+          look:{suit:0x16a8a0, skin:0xf5c99b, num:'456', bacon:true},
+          spd:3, jmp:5, ab:'跳躍高手：跳得更高，空中可「二段跳」', tag:'普通', tagC:'#1ec95a'},
+  kara:  {name:'小咔啦', move:9.0, jump:10.5, dbl:false, sprint:1.6,
+          look:{suit:0xe8a33d, arms:0xe8a33d, skin:0xffe0bd, pants:0xc0392b, cap:0xd62828, num:'218'},
+          spd:5, jmp:3, ab:'衝刺：跑得快，按住 Shift／「衝」加速衝刺（消耗體力）', tag:'簡單', tagC:'#3bd0ff'}
+};
+let charKey = CHARS[params.get('char')] ? params.get('char') : 'bacon';
+let CH = CHARS[charKey];
+let playerAvatar = null;
+let stamina = 1, sprintHeld = false;
+function setCharacter(k){
+  charKey = k; CH = CHARS[k];
+  if (playerAvatar) scene.remove(playerAvatar);
+  playerAvatar = makeAvatar(CH.look); scene.add(playerAvatar);
+  playerAvatar.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  $('charName').textContent = CH.name;
+  $('stamWrap').classList.toggle('hidden', !CH.sprint);
+  $('dashBtn').classList.toggle('hidden', !CH.sprint);
+  G.char = k;
+}
+setCharacter(charKey);
 let deathY = -15;
 
 function addSolid(mesh, extra={}){
@@ -316,7 +371,7 @@ function eliminate(text='淘汰！', sound='shot', delay=1.4){
 function completeLevel(){
   if (G.state !== 'playing') return;
   G.state = 'transition'; sfx.win();
-  if (G.level >= 3){
+  if (G.level >= 5){
     G.totalTime = (performance.now() - G.runStart)/1000;
     showMsg('🏆 通關！', 1800, '#ffd23f');
     setTimeout(showWin, 1800);
@@ -355,12 +410,12 @@ function addFlag(L, x, top, z, color){
   box(1.2, 0.8, 0.1, color, x + 0.6, top + 2.6, z, L);
 }
 // rotating bar obstacle: knocks the player off unless they jump over it
-function addSweeper(L, x, top, z, len, w, color=0xe8202a){
+function addSweeper(L, x, top, z, len, w, color=0xe8202a, a0=null){
   const g = new THREE.Group(); g.position.set(x, top, z); L.add(g);
   box(0.6, 1.3, 0.6, 0x444444, 0, 0.65, 0, g);
   box(len, 0.4, 0.4, color, 0, 0.7, 0, g);
   box(0.42, 0.42, 0.42, 0xffd23f, len/2 - 0.2, 0.7, 0, g); box(0.42, 0.42, 0.42, 0xffd23f, -len/2 + 0.2, 0.7, 0, g);
-  const sw = {g, x, z, top, len, w, a:Math.random()*6};
+  const sw = {g, x, z, top, len, w, a: a0 ?? Math.random()*6};
   sweepers.push(sw);
   return sw;
 }
@@ -471,8 +526,8 @@ function buildLevel3(){
   addDisc(L, 0, 0.5, -15, 3.5, 0xd9962e);
   addSweeper(L, 0, 0.5, -15, 6.6, 1.5);
   addDisc(L, -3, 1, -21, 1.6, 0x3bd0ff, 1.5);
-  addDisc(L, 1, 1.5, -26, 1.6, 0xb07cff, -1.8);
-  addPlatform(L, 0, 2, -33, 6, 6, 0x1ec95a, {tag:'check'});
+  addDisc(L, 0.5, 1.5, -25.2, 1.6, 0xb07cff, -1.8);
+  addPlatform(L, 0, 2, -32.6, 6, 6, 0x1ec95a, {tag:'check'});
   addPlatform(L, 0, 2, -43, 1.8, 13, 0xff5a5a);       // narrow walkway
   addSweeper(L, 0, 2, -39.5, 5, 2.2);
   addSweeper(L, 0, 2, -46.5, 5, -2.6, 0x3b5bff);
@@ -518,31 +573,138 @@ function updateDynamics(dt, t){
   }
 }
 
-const LEVEL_NAMES = {1:'第 1 關：跳格子踏石', 2:'第 2 關：玻璃橋', 3:'第 3 關：椪糖跳台（困難）'};
+// ======================= LEVEL 4: 彈珠迴旋 =======================
+function buildLevel4(){
+  scene.background = new THREE.Color(0xffb46b); scene.fog = new THREE.Fog(0xffb46b, 45, 140);
+  hemi.intensity = 1.5; sun.intensity = 2.0; deathY = -14;
+  const L = levelGroup;
+  box(200, 1, 220, 0x6b4a3a, 0, -20, -50, L);
+  const marbleCols = [0xff3b5c, 0x3bd0ff, 0x1ec95a, 0xffd23f, 0xb07cff];
+  for (let i=0;i<14;i++){ // giant decorative marbles on the alley floor
+    const m = new THREE.Mesh(new THREE.SphereGeometry(1.5 + Math.random()*2, 16, 12), new THREE.MeshPhongMaterial({color:marbleCols[i%5], shininess:90, transparent:true, opacity:0.85}));
+    m.position.set((i%2 ? 1 : -1)*(9 + Math.random()*12), -18, 8 - i*7); L.add(m);
+  }
+  addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
+  addDisc(L, 0, 0.5, -6.8, 1.8, 0xff3b5c, 2.2);
+  addPlatform(L, 2.5, 1, -11.5, 2.2, 2.2, 0xffd23f, {move:{ax:2, spd:1.8}});
+  addDisc(L, -1, 1.5, -16.5, 1.6, 0x3bd0ff, -2.5);
+  addPlatform(L, -1, 1.5, -23, 5, 5, 0x1ec95a, {tag:'check'});
+  addDisc(L, 0, 2, -30.5, 3.2, 0xb07cff, 0.8);
+  addSweeper(L, 0, 2, -30.5, 6, 2.0);
+  addPlatform(L, 0, 2.5, -37.5, 2, 2, 0xff9f2e, {move:{az:1.2, spd:2.0}});
+  addPlatform(L, 0, 2.5, -45.5, 1.4, 10, 0xff5a5a);
+  addSweeper(L, 0, 2.5, -42, 4.4, 2.4);
+  addSweeper(L, 0, 2.5, -45.5, 4.4, -2.8, 0x3b5bff);
+  addSweeper(L, 0, 2.5, -49, 4.4, 3.0);
+  addPlatform(L, 0, 3, -54, 5, 5, 0x1ec95a, {tag:'check'});
+  addDisc(L, 3, 3.5, -60, 1.4, 0xffd23f, 3.0);
+  addDisc(L, -0.5, 4, -64.1, 1.4, 0x1ec95a, -3.0);
+  addPlatform(L, -0.5, 4, -69.5, 2, 2, 0x3bd0ff, {move:{ax:3, spd:2.2}});
+  addPlatform(L, 0, 4.5, -77, 8, 8, 0xffd23f, {tag:'finish'});
+  addFinish(L, 0, 4.5, -77);
+  player.spawn.set(0, 0, 1);
+  showMsg('第 4 關：彈珠迴旋<small>旋轉彈珠盤＋三支橫桿窄道，抓準時機！</small>', 2600, '#fff');
+}
+
+// ======================= LEVEL 5: 魷魚決戰 =======================
+function buildLevel5(){
+  scene.background = new THREE.Color(0x1a0a1f); scene.fog = new THREE.Fog(0x1a0a1f, 40, 130);
+  hemi.intensity = 1.3; sun.intensity = 1.9; deathY = -14;
+  const L = levelGroup;
+  box(200, 1, 220, 0x3a0a14, 0, -20, -50, L);
+  // giant neon ○△□ squid court symbols
+  const neon = (txt, col, x, y, z, s) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(s, s), new THREE.MeshBasicMaterial({map:textTexture(txt, col, null, 128, 128, 'bold 110px sans-serif'), transparent:true, fog:false})); p.position.set(x, y, z); L.add(p); };
+  neon('○', '#ff3b8d', -16, 8, -30, 14); neon('△', '#3bd0ff', 16, 8, -55, 14); neon('□', '#ffd23f', -16, 8, -80, 14);
+  neon('₩456億', '#ffd23f', 0, 17, -110, 30);
+  addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
+  addPlatform(L, 0, 0, -6.8, 1.8, 1.8, 0xe8336d, {move:{ax:3, spd:2.4}});
+  addDisc(L, 0, 0.5, -12, 1.5, 0x3bd0ff, 3.2);
+  addDisc(L, 2.5, 1, -17, 1.5, 0xffd23f, -3.5);
+  addPlatform(L, 2.5, 1, -22.5, 1.6, 6, 0xff5a5a);
+  addSweeper(L, 2.5, 1, -22.5, 4, 3.0);
+  addPlatform(L, 0, 1.5, -30, 5, 5, 0x1ec95a, {tag:'check'});
+  addDisc(L, 0, 2, -37.5, 3.5, 0xe8336d, 1.2);
+  addSweeper(L, 0, 2, -37.5, 6.8, 1.6, 0xffd23f, 0);
+  addSweeper(L, 0, 2, -37.5, 6.8, 1.6, 0xffd23f, Math.PI/2);
+  addPlatform(L, 0, 2.5, -45, 1.8, 1.8, 0xb07cff, {move:{az:1.3, spd:2.4}});
+  addPlatform(L, -3, 3, -50.5, 1.8, 1.8, 0x3bd0ff, {move:{ax:2, spd:2.6}});
+  addDisc(L, 0, 3.5, -55.5, 1.3, 0xff9f2e, 4.0);
+  addPlatform(L, 0, 4, -62, 5, 5, 0x1ec95a, {tag:'check'});
+  addPlatform(L, 0, 4, -71, 1.2, 13, 0xff5a5a);
+  addSweeper(L, 0, 4, -67, 4, 3.0);
+  addSweeper(L, 0, 4, -71, 4, -3.4, 0x3b5bff);
+  addSweeper(L, 0, 4, -75, 4, 3.8);
+  addDisc(L, 0, 4.5, -81, 2.2, 0xe8336d, -1.5);
+  addSweeper(L, 0, 4.5, -81, 4.2, 2.6, 0xffd23f);
+  addPlatform(L, 2.5, 5, -86.6, 1.6, 1.6, 0xffd23f, {move:{ax:2.5, spd:2.8}});
+  addPlatform(L, 0, 5.5, -94, 8, 8, 0xffd23f, {tag:'finish'});
+  addFinish(L, 0, 5.5, -94);
+  // piggy bank of prize money
+  const pig = new THREE.Group(); pig.position.set(0, 5.5, -97); L.add(pig);
+  box(3, 2.2, 2, 0xffc0d8, 0, 1.6, 0, pig); box(1, 0.8, 0.6, 0xff9fc0, 0, 1.5, 1.2, pig); box(1.6, 0.2, 0.4, 0xffd23f, 0, 2.75, 0, pig);
+  [[-1,-0.6],[1,-0.6],[-1,0.6],[1,0.6]].forEach(([x,z]) => box(0.5, 0.6, 0.5, 0xffc0d8, x, 0.3, z, pig));
+  player.spawn.set(0, 0, 1);
+  showMsg('第 5 關：魷魚決戰<small>最終關！十字旋轉桿、高速轉盤，撐到最後！</small>', 2600, '#ff3b8d');
+}
+
+const LEVEL_NAMES = {1:'第 1 關：跳格子踏石', 2:'第 2 關：玻璃橋', 3:'第 3 關：椪糖跳台', 4:'第 4 關：彈珠迴旋', 5:'第 5 關：魷魚決戰（最終關）'};
 function loadLevel(n){
   clearLevel();
   G.level = n; $('lvName').textContent = LEVEL_NAMES[n];
-  [buildLevel1, buildLevel2, buildLevel3][n-1]();
+  [buildLevel1, buildLevel2, buildLevel3, buildLevel4, buildLevel5][n-1]();
   levelGroup.traverse(o => { if (o.isMesh && o.material && o.material.transparent) o.castShadow = false; });
   player.checkpoint = null;
   respawn();
   G.state = 'playing';
 }
-window.__game.loadLevel = loadLevel; window.__game.player = player;
+window.__game.loadLevel = loadLevel; window.__game.player = player; window.__game.solids = () => solids; window.__game.dynamics = () => dynamics; window.__game.chars = CHARS;
 
 function startGame(level=1){
   initAudio();
   G.deaths = 0; $('deaths').textContent = '0'; G.runStart = performance.now();
-  $('startScreen').classList.add('hidden'); $('winScreen').classList.add('hidden');
+  $('startScreen').classList.add('hidden'); $('winScreen').classList.add('hidden'); $('charScreen').classList.add('hidden'); stamina = 1;
   $('hudL').classList.remove('hidden'); $('restartTop').classList.remove('hidden');
   loadLevel(level);
 }
-$('startBtn').addEventListener('click', () => startGame(1));
-$('againBtn').addEventListener('click', () => startGame(1));
-$('restartTop').addEventListener('click', () => { if (confirm('確定要從第 1 關重新開始嗎？')) startGame(1); });
+let previews = null;
+function makePreviews(){
+  const out = {};
+  try {
+    const r = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
+    r.setSize(240, 280); r.setPixelRatio(1);
+    const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
+    const dl = new THREE.DirectionalLight(0xffffff, 2); dl.position.set(3, 5, 4); sc.add(dl);
+    const cam = new THREE.PerspectiveCamera(35, 240/280, 0.1, 50); cam.position.set(0, 2.1, 6.2); cam.lookAt(0, 1.55, 0);
+    for (const k in CHARS){ const a = makeAvatar(CHARS[k].look); a.rotation.y = 0.45; a.userData.armR.rotation.x = -0.5; a.userData.legL.rotation.x = 0.3; a.userData.legR.rotation.x = -0.3;
+      sc.add(a); r.render(sc, cam); out[k] = r.domElement.toDataURL('image/png'); sc.remove(a); }
+    r.dispose(); r.forceContextLoss && r.forceContextLoss();
+  } catch(e){ }
+  return out;
+}
+function stars(n){ return `<span class="bar"><i style="width:${n*20}%"></i></span>`; }
+function showCharSelect(){
+  G.state = 'menu';
+  if (!previews) previews = makePreviews();
+  const c = $('cards'); c.innerHTML = '';
+  for (const k in CHARS){
+    const ch = CHARS[k], d = document.createElement('div'); d.className = 'card'; d.dataset.char = k;
+    d.innerHTML = `${previews[k] ? `<img src="${previews[k]}" alt="${ch.name}">` : ''}<h2>${ch.name}</h2>
+      <div class="row">速度${stars(ch.spd)}</div><div class="row">跳躍${stars(ch.jmp)}</div>
+      <div class="ab">${ch.ab}</div><span class="tag" style="background:${ch.tagC}">${ch.tag}</span>`;
+    d.addEventListener('click', () => { setCharacter(k); $('charScreen').classList.add('hidden'); startGame(1); });
+    c.appendChild(d);
+  }
+  ['startScreen','winScreen'].forEach(id => $(id).classList.add('hidden'));
+  $('hudL').classList.add('hidden'); $('restartTop').classList.add('hidden');
+  $('charScreen').classList.remove('hidden');
+}
+window.__game.showCharSelect = showCharSelect;
+$('startBtn').addEventListener('click', () => { initAudio(); showCharSelect(); });
+$('againBtn').addEventListener('click', () => showCharSelect());
+$('restartTop').addEventListener('click', () => { if (confirm('確定要重新開始並重新選擇角色嗎？')) showCharSelect(); });
 
 // ---------- physics ----------
-const MOVE = 8, JUMP = 10.5, GRAV = 28;
+const GRAV = 28;
 const tmpF = new THREE.Vector3(), tmpR = new THREE.Vector3();
 function updatePlayer(dt, t){
   const u = playerAvatar.userData;
@@ -568,12 +730,20 @@ function updatePlayer(dt, t){
   let il = Math.hypot(ix, iy); if (il > 1){ ix /= il; iy /= il; il = 1; }
   if (il < 0.12){ ix = iy = 0; il = 0; }
   tmpF.set(-Math.sin(camYaw), 0, -Math.cos(camYaw)); tmpR.set(Math.cos(camYaw), 0, -Math.sin(camYaw));
+  const sprinting = CH.sprint && (keys.ShiftLeft || keys.ShiftRight || sprintHeld) && stamina > 0 && il > 0;
+  if (CH.sprint){ stamina = sprinting ? Math.max(0, stamina - dt/2.5) : Math.min(1, stamina + dt/3); $('stamFill').style.width = (stamina*100).toFixed(0) + '%'; }
+  const MOVE = CH.move * (sprinting ? CH.sprint : 1);
   const tx = (tmpF.x*iy + tmpR.x*ix) * MOVE, tz = (tmpF.z*iy + tmpR.z*ix) * MOVE;
   player.knock -= dt;
   const acc = Math.min(1, dt * (player.knock > 0 ? 0.8 : player.grounded ? 14 : 5));
   player.vel.x += (tx - player.vel.x) * acc; player.vel.z += (tz - player.vel.z) * acc;
   if (player.grounded) player.coyote = 0.1; else player.coyote -= dt;
-  if (jumpQueued && player.coyote > 0 && G.state === 'playing'){ player.vel.y = JUMP; player.grounded = false; player.ground = null; player.coyote = 0; sfx.jump(); }
+  if (player.grounded) player.dbl = false;
+  if (jumpQueued && G.state === 'playing'){
+    if (player.coyote > 0){ player.vel.y = CH.jump; player.grounded = false; player.ground = null; player.coyote = 0; sfx.jump(); }
+    else if (CH.dbl && !player.dbl){ player.dbl = true; player.vel.y = CH.jump * 0.9; player.flip = 0.45; sfx.jump(); beep(900,0.1,'square',0.05,0.05,1400); }
+  }
+  if (player.flip > 0){ player.flip -= dt; playerAvatar.userData.body.rotation.x = -(1 - player.flip/0.45) * Math.PI * 2; if (player.flip <= 0) playerAvatar.userData.body.rotation.x = 0; }
   jumpQueued = false;
   player.vel.y -= GRAV * dt; if (player.vel.y < -40) player.vel.y = -40;
   const prevY = player.pos.y;
@@ -645,7 +815,7 @@ function frame(now){
 requestAnimationFrame(frame);
 
 // test hook: ?level=N starts directly at that level
-if (params.has('level')) setTimeout(() => startGame(Math.max(1, Math.min(3, +params.get('level') || 1))), 50);
+if (params.has('level')) setTimeout(() => startGame(Math.max(1, Math.min(5, +params.get('level') || 1))), 50);
 })();
 </script>
 </body>
