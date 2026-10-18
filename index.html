@@ -55,8 +55,6 @@
 <div id="app"></div>
 <div id="flash"></div>
 <div id="hudL" class="hud hidden"><div class="lv" id="lvName">第 1 關</div><div>💀 淘汰次數：<span id="deaths">0</span></div><div>⏱ 總時間：<span id="time">0.0</span> 秒</div></div>
-<div id="light" class="hud">綠燈</div>
-<div id="cd" class="hud">60</div>
 <div id="msg" class="hud"></div>
 <button id="restartTop" class="hidden">↻ 重新開始</button>
 <div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint">拖曳畫面轉視角</div><div id="jumpBtn">跳</div></div>
@@ -64,7 +62,7 @@
 <div id="startScreen" class="screen">
   <div class="shapes">○△□</div>
   <h1>魷魚遊戲 闖關挑戰</h1>
-  <p>三道關卡：<b>一二三木頭人</b> → <b>玻璃橋</b> → <b>椪糖跳台</b>，活著抵達終點！</p>
+  <p>三道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b>，活著抵達終點！掉下去會回到檢查點 🚩</p>
   <p>⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍、滑鼠拖曳轉動視角</p>
   <p>📱 平板／手機：左下搖桿移動、右下「跳」按鈕、拖曳畫面轉動視角</p>
   <button class="btn" id="startBtn">開始遊戲</button>
@@ -130,6 +128,7 @@ resize();
 
 // ---------- helpers ----------
 const unitBox = new THREE.BoxGeometry(1,1,1);
+const R = 0.45;
 const matCache = {};
 function mat(color){ if(!matCache[color]) matCache[color] = new THREE.MeshLambertMaterial({color}); return matCache[color]; }
 function box(w,h,d,color,x=0,y=0,z=0,parent=null,material=null){
@@ -224,6 +223,7 @@ const sfx = {
   jump(){ beep(400,0.12,'square',0.05,0,800); },
   win(){ [523,659,784,1046].forEach((f,i)=>beep(f,0.22,'square',0.1,i*0.15)); },
   fall(){ beep(800,0.7,'triangle',0.1,0,120); },
+  hit(){ beep(180,0.2,'square',0.15,0,90); noise(0.12,0.2,800); },
   check(){ beep(784,0.1,'square',0.08); beep(1046,0.2,'square',0.08,0.1); }
 };
 
@@ -279,9 +279,9 @@ if (isTouch) $('touch').classList.add('on');
 // ---------- game state ----------
 const G = { state:'menu', level:0, deaths:0, runStart:0, totalTime:0 };
 window.__game = G;
-let levelGroup = null, solids = [], dynamics = [], shards = [];
+let levelGroup = null, solids = [], dynamics = [], shards = [], sweepers = [];
 let levelUpdate = null, onRespawn = null;
-const player = { pos:new THREE.Vector3(), vel:new THREE.Vector3(), grounded:false, ground:null, dead:false, deadT:0, spawn:new THREE.Vector3(), facing:Math.PI, coyote:0 };
+const player = { pos:new THREE.Vector3(), vel:new THREE.Vector3(), grounded:false, ground:null, dead:false, deadT:0, spawn:new THREE.Vector3(), facing:Math.PI, coyote:0, knock:0, checkpoint:null };
 const playerAvatar = makeAvatar({suit:0x16a8a0, skin:0xffd23f, pants:0x16a8a0, num:'456', hair:0x3b2a1a});
 scene.add(playerAvatar);
 playerAvatar.traverse(o => { if (o.isMesh) o.castShadow = true; });
@@ -300,8 +300,7 @@ function solidBounds(s){
 function clearLevel(){
   if (levelGroup){ scene.remove(levelGroup); levelGroup.traverse(o => { if (o.geometry && o.geometry !== unitBox) o.geometry.dispose(); }); }
   levelGroup = new THREE.Group(); scene.add(levelGroup);
-  solids = []; dynamics = []; shards = []; levelUpdate = null; onRespawn = null;
-  $('light').className = 'hud'; $('cd').style.display = 'none';
+  solids = []; dynamics = []; shards = []; sweepers = []; levelUpdate = null; onRespawn = null;
 }
 function showMsg(html, ms=1500, color='#fff'){
   const m = $('msg'); m.innerHTML = html; m.style.color = color; m.style.display = 'block';
@@ -310,7 +309,7 @@ function showMsg(html, ms=1500, color='#fff'){
 function flash(color='#f00'){ const f = $('flash'); f.style.background = color; f.style.transition = 'none'; f.style.opacity = 0.55; requestAnimationFrame(() => { f.style.transition = 'opacity .6s'; f.style.opacity = 0; }); }
 
 function respawn(){
-  player.pos.copy(player.spawn); player.vel.set(0,0,0); player.dead = false; player.grounded = false; player.ground = null;
+  player.pos.copy(player.spawn); player.vel.set(0,0,0); player.dead = false; player.grounded = false; player.ground = null; player.knock = 0;
   player.facing = Math.PI; camYaw = 0;
   playerAvatar.rotation.set(0, Math.PI, 0); playerAvatar.userData.body.rotation.set(0,0,0); playerAvatar.userData.body.position.set(0,0,0);
   if (onRespawn) onRespawn();
@@ -319,7 +318,7 @@ function eliminate(text='淘汰！', sound='shot', delay=1.4){
   if (player.dead || G.state !== 'playing') return;
   player.dead = true; player.deadT = delay; G.deaths++; $('deaths').textContent = G.deaths;
   sfx[sound] && sfx[sound](); flash();
-  showMsg(text + '<small>回到起點重新挑戰</small>', delay*1000, '#ff4a4a');
+  showMsg(text + '<small>回到檢查點重新挑戰</small>', delay*1000, '#ff4a4a');
 }
 function completeLevel(){
   if (G.state !== 'playing') return;
@@ -340,121 +339,80 @@ function showWin(){
   $('winScreen').classList.remove('hidden'); $('restartTop').classList.add('hidden');
 }
 
-// ======================= LEVEL 1: 一二三木頭人 =======================
+// ---------- shared level builders ----------
+function addPlatform(L, x, top, z, w, d, color, extra={}){
+  const m = box(w, 1, d, color, x, top - 0.5, z, L);
+  const s = addSolid(m, extra);
+  if (extra.move) dynamics.push({m, base:new THREE.Vector3(x, top - 0.5, z), mv:extra.move, ph:Math.random()*6});
+  if (extra.tag === 'check') addFlag(L, x + w/2 - 0.5, top, z - d/2 + 0.5, 0x1ec95a);
+  return s;
+}
+function addDisc(L, x, top, z, r, color, spin=0, extra={}){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, 28), mat(color));
+  m.position.set(x, top - 0.5, z); m.castShadow = true; m.receiveShadow = true; L.add(m);
+  // stripes so spinning is visible
+  const st = box(r*1.9, 0.04, 0.35, 0xffffff, 0, 0.51, 0, m); st.castShadow = false;
+  const st2 = box(0.35, 0.04, r*1.9, 0xffffff, 0, 0.51, 0, m); st2.castShadow = false;
+  const s = addSolid(m, Object.assign({disc:true, r, spin}, extra));
+  if (spin) dynamics.push({m, spin});
+  return s;
+}
+function addFlag(L, x, top, z, color){
+  box(0.18, 3, 0.18, 0xffffff, x, top + 1.5, z, L);
+  box(1.2, 0.8, 0.1, color, x + 0.6, top + 2.6, z, L);
+}
+// rotating bar obstacle: knocks the player off unless they jump over it
+function addSweeper(L, x, top, z, len, w, color=0xe8202a){
+  const g = new THREE.Group(); g.position.set(x, top, z); L.add(g);
+  box(0.6, 1.3, 0.6, 0x444444, 0, 0.65, 0, g);
+  box(len, 0.4, 0.4, color, 0, 0.7, 0, g);
+  box(0.42, 0.42, 0.42, 0xffd23f, len/2 - 0.2, 0.7, 0, g); box(0.42, 0.42, 0.42, 0xffd23f, -len/2 + 0.2, 0.7, 0, g);
+  const sw = {g, x, z, top, len, w, a:Math.random()*6};
+  sweepers.push(sw);
+  return sw;
+}
+function addFinish(L, x, top, z){
+  // goal arch + trophy
+  box(0.6, 5, 0.6, 0xffffff, x - 3.2, top + 2.5, z + 2, L); box(0.6, 5, 0.6, 0xffffff, x + 3.2, top + 2.5, z + 2, L);
+  const ban = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.4), new THREE.MeshBasicMaterial({map:textTexture('終點 GOAL','#fff','#e8336d',256,52,'bold 36px sans-serif'), side:THREE.DoubleSide}));
+  ban.position.set(x, top + 4.6, z + 2); L.add(ban);
+  box(1.6,0.4,1.6,0xc9a227,x,top+0.2,z-2,L); box(0.5,1.0,0.5,0xffd23f,x,top+0.9,z-2,L); box(1.6,1.4,1.6,0xffd23f,x,top+2.0,z-2,L);
+  box(0.3,0.8,0.3,0xffd23f,x-1,top+2.1,z-2,L); box(0.3,0.8,0.3,0xffd23f,x+1,top+2.1,z-2,L);
+}
+
+// ======================= LEVEL 1: 跳格子踏石 =======================
 function buildLevel1(){
   scene.background = new THREE.Color(0x8fd3ff); scene.fog = new THREE.Fog(0x8fd3ff, 60, 170);
-  hemi.intensity = 1.6; sun.intensity = 2.2; deathY = -15;
+  hemi.intensity = 1.6; sun.intensity = 2.2; deathY = -2.2;
   const L = levelGroup;
-  const ground = box(44, 1, 140, 0xe8c98a, 0, -0.5, -50, L); addSolid(ground);
-  // walls with painted sky
-  const wallMat = mat(0x9fd8ff);
-  box(1, 14, 140, 0, -22, 7, -50, L, wallMat); box(1, 14, 140, 0, 22, 7, -50, L, wallMat);
-  box(44, 14, 1, 0, 0, 7, -120, L, wallMat); box(44, 14, 1, 0, 0, 7, 20, L, wallMat);
-  for (let i=0;i<10;i++){ // clouds painted on walls
-    box(0.2, 1.5, 5+Math.random()*4, 0xffffff, -21.4, 6+Math.random()*6, 10 - i*13, L);
-    box(0.2, 1.5, 5+Math.random()*4, 0xffffff, 21.4, 6+Math.random()*6, 5 - i*13, L);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshLambertMaterial({color:0x2f8fe0}));
+  water.rotation.x = -Math.PI/2; water.position.set(0, -2.6, -40); water.receiveShadow = true; L.add(water);
+  // side islands with blocky trees
+  for (let i=0;i<8;i++){
+    const side = i%2 ? 1 : -1, x = side*(14 + Math.random()*6), z = 5 - i*9;
+    box(6, 2, 6, 0x7bd35a, x, -2, z, L);
+    box(0.8, 3, 0.8, 0x7a4a26, x, 0.5, z, L); box(2.6, 2.4, 2.6, 0x2fa84f, x, 3, z, L);
   }
-  box(44, 0.04, 1, 0xffffff, 0, 0.02, 0, L);           // start line
-  box(44, 0.04, 1.2, 0xe8202a, 0, 0.02, -90, L);      // finish line
-  // finish banner
-  const banner = new THREE.Mesh(new THREE.PlaneGeometry(10,2), new THREE.MeshBasicMaterial({map:textTexture('終點','#fff','#e8202a',256,64,'bold 48px sans-serif')}));
-  banner.position.set(0, 0.03, -92.5); banner.rotation.x = -Math.PI/2; L.add(banner);
-  // tree
-  box(1.4, 9, 1.4, 0x7a4a26, 7, 4.5, -103, L);
-  [[1,6,0.5],[-1,7,0.6],[0.8,8,-0.6],[-0.6,5.5,-0.4]].forEach(([dx,y,dz]) => { const b = box(0.5,0.5,4,0x7a4a26, 7+dx*1.6, y, -103+dz, L); b.rotation.y = dx*1.2; b.rotation.x = 0.4; });
-  // doll
-  const doll = new THREE.Group(); L.add(doll);
-  box(4, 0.6, 4, 0x999999, 0, 0.3, 0, doll);
-  const d = new THREE.Group(); d.position.y = 0.6; doll.add(d);
-  box(0.6,1.2,0.6,0xffd9b0,-0.7,0.6,0,d); box(0.6,1.2,0.6,0xffd9b0,0.7,0.6,0,d);
-  box(0.75,0.35,0.9,0x222222,-0.7,0.15,0.08,d); box(0.75,0.35,0.9,0x222222,0.7,0.15,0.08,d);
-  box(3.2, 2.6, 2.3, 0xf08a24, 0, 2.5, 0, d);
-  box(2.6, 1.6, 1.8, 0xffd84a, 0, 4.5, 0, d);
-  box(0.7, 2.2, 0.7, 0xffd84a, -1.7, 4.2, 0, d); box(0.7, 2.2, 0.7, 0xffd84a, 1.7, 4.2, 0, d);
-  box(0.6, 0.6, 0.6, 0xffd9b0, -1.7, 2.9, 0, d); box(0.6, 0.6, 0.6, 0xffd9b0, 1.7, 2.9, 0, d);
-  box(2.4, 2.3, 2.2, 0xffd9b0, 0, 6.5, 0, d);
-  box(2.6, 0.7, 2.4, 0x1a1a1a, 0, 7.75, -0.05, d);
-  box(2.6, 2.2, 0.5, 0x1a1a1a, 0, 6.7, -1.2, d);
-  box(0.5, 1.8, 0.5, 0x1a1a1a, -1.55, 6.3, -0.5, d); box(0.5, 1.8, 0.5, 0x1a1a1a, 1.55, 6.3, -0.5, d);
-  box(2.62, 0.5, 0.3, 0x1a1a1a, 0, 7.3, 1.05, d); // bangs
-  const eyeMat = new THREE.MeshLambertMaterial({color:0x111111, emissive:0x000000});
-  box(0.45,0.5,0.1,0,-0.55,6.6,1.12,d,eyeMat); box(0.45,0.5,0.1,0,0.55,6.6,1.12,d,eyeMat);
-  box(0.4,0.2,0.08,0xff8fa8,-0.8,6.05,1.12,d); box(0.4,0.2,0.08,0xff8fa8,0.8,6.05,1.12,d);
-  box(0.6,0.12,0.08,0xc0304a,0,5.8,1.12,d);
-  doll.scale.setScalar(1.7); doll.position.set(0, 0, -103); doll.rotation.y = Math.PI;
-  // guards
-  [[-8,'○'],[8,'△'],[-14,'□'],[14,'○']].forEach(([x,m]) => { const gd = makeAvatar({suit:0xe8336d, pants:0xe8336d, skin:0x111111, mask:m}); gd.position.set(x,0,-97); gd.scale.setScalar(1.15); L.add(gd); });
-
-  // NPCs
-  const npcs = [];
-  const skins = [0xffd23f,0xf5c99b,0xd99a6c,0x8d5a3b,0xffe0bd];
-  const hairs = [0x111111,0x3b2a1a,0x7a4a26,0xd9b44a,0xaa2222];
-  function spawnNpc(z0){
-    const a = makeAvatar({suit:0x2e7d5b, pants:0x2e7d5b, skin:skins[Math.random()*5|0], hair:Math.random()<0.8?hairs[Math.random()*5|0]:null, num:String(1+Math.random()*455|0).padStart(3,'0')});
-    const n = {a, x:(Math.random()-0.5)*34, z:z0 ?? (2+Math.random()*8), speed:3+Math.random()*3.5, state:'run', fail:false, failT:0, deadT:0, wob:Math.random()*6};
-    a.position.set(n.x,0,n.z); a.rotation.y = Math.PI; L.add(a); npcs.push(n); return n;
-  }
-  for (let i=0;i<14;i++) spawnNpc(2 - Math.random()*40);
-
-  // light cycle
-  const light = {phase:'green', t:3, total:60};
-  let timeLeft = 60;
-  const lightEl = $('light'), cdEl = $('cd');
-  function setPhase(p){
-    light.phase = p;
-    if (p === 'green'){ light.t = 2 + Math.random()*3; lightEl.className='hud green'; lightEl.textContent='🟢 綠燈：快跑！'; sfx.green(); eyeMat.emissive.setHex(0); eyeMat.color.setHex(0x111111); }
-    else if (p === 'turn'){ light.t = 0.7; lightEl.className='hud turn'; lightEl.textContent='一二三…木頭人！'; sfx.sing(); }
-    else { light.t = 2 + Math.random()*2.2; lightEl.className='hud red'; lightEl.textContent='🔴 紅燈：不准動！'; sfx.red(); eyeMat.color.setHex(0xff0000); eyeMat.emissive.setHex(0xff0000);
-      npcs.forEach(n => { if (n.state === 'run'){ if (Math.random() < 0.22){ n.fail = true; n.failT = 0.15 + Math.random()*0.5; } else n.state = 'stop'; } }); }
-  }
-  setPhase('green'); light.t = 3;
-  cdEl.style.display = 'block';
-  player.spawn.set(0, 0, 6);
-  onRespawn = () => { timeLeft = 60; };
-  let lastPx = 0, lastPz = 0, targetRot = Math.PI;
-
-  levelUpdate = (dt, t) => {
-    // timer
-    if (!player.dead){ timeLeft -= dt; if (timeLeft <= 0){ timeLeft = 0; eliminate('時間到！'); } }
-    cdEl.textContent = `⏳ ${Math.ceil(timeLeft)} 秒`; cdEl.style.color = timeLeft < 10 ? '#ff5050' : '#fff';
-    // lights
-    light.t -= dt;
-    if (light.t <= 0){ setPhase(light.phase === 'green' ? 'turn' : light.phase === 'turn' ? 'red' : 'green'); }
-    targetRot = (light.phase === 'green') ? Math.PI : 0;
-    const dr = targetRot - doll.rotation.y; doll.rotation.y += dr * Math.min(1, dt * (light.phase === 'green' ? 6 : 9));
-    // detection
-    const moved = Math.hypot(player.pos.x - lastPx, player.pos.z - lastPz) / Math.max(dt, 1e-4);
-    if (light.phase === 'red' && !player.dead && player.pos.z > -90 && light.t < (light.t + 10) && (moved > 0.6 || player.vel.y > 1)){
-      eliminate('你動了！淘汰！');
-    }
-    lastPx = player.pos.x; lastPz = player.pos.z;
-    if (player.pos.z < -90.6 && !player.dead) completeLevel();
-    // NPCs
-    let alive = 0;
-    for (const n of npcs){
-      const a = n.a;
-      if (n.state === 'dead'){
-        n.deadT += dt; const k = Math.min(1, n.deadT*4);
-        a.userData.body.rotation.x = -k*Math.PI/2; a.userData.body.position.y = k*0.3; continue;
-      }
-      if (n.state === 'done'){ animateAvatar(a, 0, t); a.position.y = Math.abs(Math.sin(t*6 + n.wob))*0.5; continue; }
-      alive++;
-      let moving = false;
-      if (light.phase !== 'red' && n.state !== 'done'){ n.state = 'run'; }
-      if (n.state === 'run' && (light.phase !== 'red' || n.fail)){
-        moving = true;
-        n.z -= n.speed * dt; n.x += Math.sin(t*0.8 + n.wob) * dt * 1.2;
-        n.x = Math.max(-20, Math.min(20, n.x));
-        if (light.phase === 'red' && n.fail){ n.failT -= dt; if (n.failT <= 0){ n.state = 'dead'; n.fail = false; sfx.npcShot();
-          const blood = box(1.6, 0.03, 1.2, 0xb0102a, n.x, 0.02, n.z - 1.3, L); blood.castShadow = false; } }
-        if (n.z < -92 - Math.random()*4){ n.state = 'done'; }
-      }
-      if (light.phase !== 'red') n.fail = false;
-      a.position.set(n.x, a.position.y, n.z);
-      animateAvatar(a, moving ? n.speed : 0, t);
-    }
-    if (alive < 6 && light.phase === 'green' && Math.random() < dt*1.5) spawnNpc();
+  addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
+  // hopscotch grid 1..8 (single, double, single, double…)
+  const tile = (x, z, n) => {
+    const s = addPlatform(L, x, 0, z, 2.4, 2.4, [0xffd23f,0x3bd0ff,0xff5a5a,0x1ec95a][n%4]);
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8), new THREE.MeshBasicMaterial({map:textTexture(String(n),'#fff',null,64,64,'bold 52px sans-serif'), transparent:true}));
+    p.rotation.x = -Math.PI/2; p.position.set(x, 0.02, z); L.add(p); return s;
   };
+  tile(0,-6,1); tile(-1.6,-9.8,2); tile(1.6,-9.8,3); tile(0,-13.6,4); tile(-1.6,-17.4,5); tile(1.6,-17.4,6); tile(0,-21.2,7); tile(0,-25,8);
+  addPlatform(L, 0, 0, -31, 6, 6, 0x1ec95a, {tag:'check'});
+  // stepping stones
+  const stones = [[-2,-37,0.3],[1.5,-41,0.6],[-1,-45,0.9],[2.5,-49,1.2],[0,-53,1.5],[-2.5,-57,1.8],[0,-61,2.1]];
+  stones.forEach(([x,z,y],i) => addDisc(L, x, y, z, 1.4, i%2 ? 0xbfa58a : 0xa98c70));
+  addPlatform(L, 0, 2.4, -66.5, 6, 5, 0x1ec95a, {tag:'check'});
+  // two slow moving stones
+  addPlatform(L, 0, 2.4, -72, 2.6, 2.6, 0xff9f2e, {move:{ax:2, spd:0.9}});
+  addPlatform(L, 0, 2.4, -77, 2.6, 2.6, 0xb07cff, {move:{ax:2, spd:1.1}});
+  addPlatform(L, 0, 2.4, -84, 8, 8, 0xffd23f, {tag:'finish'});
+  addFinish(L, 0, 2.4, -84);
+  player.spawn.set(0, 0, 1);
+  showMsg('第 1 關：跳格子踏石<small>跳過格子與踏石，掉進水裡會回到檢查點</small>', 2600, '#fff');
 }
 
 // ======================= LEVEL 2: 玻璃橋 =======================
@@ -462,43 +420,33 @@ function buildLevel2(){
   scene.background = new THREE.Color(0x0d1433); scene.fog = new THREE.Fog(0x0d1433, 35, 110);
   hemi.intensity = 1.2; sun.intensity = 1.8; deathY = -14;
   const L = levelGroup;
-  const startP = box(9, 1, 8, 0x3a3f5c, 0, -0.5, 0, L); addSolid(startP);
+  addPlatform(L, 0, 0, 0, 9, 8, 0x3a3f5c);
   box(9, 0.04, 0.6, 0xffd23f, 0, 0.02, -3.7, L);
-  const ROWS = 12, SP = 3.5, PS = 2.3, z0 = -6;
-  const lastZ = z0 - (ROWS-1)*SP;
-  const endP = box(9, 1, 8, 0x3a3f5c, 0, -0.5, lastZ - PS/2 - 1.3 - 4, L); addSolid(endP);
-  const endZ = lastZ - PS/2 - 1.3;
-  const endBanner = new THREE.Mesh(new THREE.PlaneGeometry(8,1.6), new THREE.MeshBasicMaterial({map:textTexture('終點','#fff','#1ec95a',256,64,'bold 48px sans-serif')}));
-  endBanner.position.set(0,0.03,endZ - 1.5); endBanner.rotation.x = -Math.PI/2; L.add(endBanner);
-  // steel frame
-  box(0.35, 0.35, endZ - 4 + 4, 0x8a8f9c, -3.0, -0.35, (endZ - 4)/2 - 2 + 2, L);
-  box(0.35, 0.35, endZ - 4 + 4, 0x8a8f9c, 0, -0.35, (endZ - 4)/2, L);
-  box(0.35, 0.35, endZ - 4 + 4, 0x8a8f9c, 3.0, -0.35, (endZ - 4)/2, L);
-  // fix rail lengths (absolute)
-  L.children.slice(-3).forEach(r => { r.scale.z = Math.abs(endZ) ; r.position.z = endZ/2; });
-  // abyss + decorative pillars & lights
+  const ROWS = 12, SP = 3.5, PS = 2.3, MID = 6, CHK = 6;
+  const rowZ = i => -6 - i*SP - (i >= MID ? CHK : 0);
+  const midZ = rowZ(MID-1) - PS/2 - 1.15 - 2;   // checkpoint platform centre (depth 4)
+  addPlatform(L, 0, 0, midZ, 7, 4, 0x2d6b45, {tag:'check'});
+  const lastZ = rowZ(ROWS-1), endZ = lastZ - PS/2 - 1.3;
+  addPlatform(L, 0, 0, endZ - 4, 9, 8, 0x3a3f5c, {tag:'finish'});
+  addFinish(L, 0, 0, endZ - 4);
+  [-3, 0, 3].forEach(x => box(0.35, 0.35, Math.abs(endZ), 0x8a8f9c, x, -0.35, endZ/2, L));
   box(80, 1, 160, 0x05070f, 0, -40, -30, L);
-  for (let i=0;i<8;i++){
+  for (let i=0;i<9;i++){
     const z = 4 - i*8;
     box(0.8, 30, 0.8, 0x222a44, -12, -14, z, L); box(0.8, 30, 0.8, 0x222a44, 12, -14, z, L);
     const lm = new THREE.MeshBasicMaterial({color: i%2 ? 0xff3b8d : 0x3bd0ff});
     box(1.2, 1.2, 1.2, 0, -12, 1.5, z, L, lm); box(1.2, 1.2, 1.2, 0, 12, 1.5, z, L, lm);
   }
-  // glass panels
   const glassMat = () => new THREE.MeshPhongMaterial({color:0x9fe8ff, transparent:true, opacity:0.42, shininess:120, specular:0xffffff, emissive:0x10324a});
-  const rows = [];
   for (let i=0;i<ROWS;i++){
-    const z = z0 - i*SP, safeSide = Math.random() < 0.5 ? 0 : 1;
-    const row = [];
+    const z = rowZ(i), safeSide = Math.random() < 0.5 ? 0 : 1, row = [];
     for (let s=0;s<2;s++){
-      const m = box(PS, 0.2, PS, 0, s===0 ? -1.5 : 1.5, -0.1, z, L, glassMat());
-      m.castShadow = false;
-      const frame = box(PS+0.1, 0.06, PS+0.1, 0x666b78, m.position.x, -0.22, z, L); frame.castShadow = false;
-      const panel = {mesh:m, frame, safe: s === safeSide, broken:false, revealed:false, row, solid:null};
-      panel.solid = addSolid(m, {panel, onLand: () => landPanel(panel)});
+      const m = box(PS, 0.2, PS, 0, s===0 ? -1.5 : 1.5, -0.1, z, L, glassMat()); m.castShadow = false;
+      box(PS+0.1, 0.06, PS+0.1, 0x666b78, m.position.x, -0.22, z, L).castShadow = false;
+      const panel = {mesh:m, safe: s === safeSide, broken:false, revealed:false, row, solid:null};
+      panel.solid = addSolid(m, {onLand: () => landPanel(panel)});
       row.push(panel);
     }
-    rows.push(row);
   }
   function reveal(p){ if (p.revealed || !p.safe) return; p.revealed = true; p.mesh.material.color.setHex(0x7dffa8); p.mesh.material.emissive.setHex(0x1a6b33); p.mesh.material.opacity = 0.7; }
   function breakPanel(p){
@@ -516,76 +464,74 @@ function buildLevel2(){
     else { breakPanel(p); player.grounded = false; player.ground = null; }
   }
   player.spawn.set(0, 0, 1);
-  const msgShown = {v:false};
-  levelUpdate = (dt) => {
-    if (!player.dead && player.pos.y < deathY) eliminate('掉下去了！', 'fall', 0.9);
-    if (!player.dead && player.grounded && player.pos.z < endZ - 0.5) completeLevel();
-  };
   showMsg('第 2 關：玻璃橋<small>每排兩片玻璃，只有一片是強化玻璃！</small>', 2500, '#9fe8ff');
 }
 
-// ======================= LEVEL 3: 椪糖跳台 =======================
+// ======================= LEVEL 3: 椪糖跳台（困難） =======================
 function buildLevel3(){
   scene.background = new THREE.Color(0xffc9e3); scene.fog = new THREE.Fog(0xffc9e3, 50, 150);
   hemi.intensity = 1.7; sun.intensity = 2.2; deathY = -14;
   const L = levelGroup;
-  box(200, 1, 200, 0xff7fb6, 0, -20, -40, L);
-  const colors = [0xffd23f, 0x3bd0ff, 0x1ec95a, 0xff5a5a, 0xb07cff, 0xff9f2e];
-  const defs = [
-    // x, z, y(top), w, d, move{ax,az,spd}
-    [0,0,0,8,8],
-    [0,-7,0,3,3],[2.5,-12,0.5,2.5,2.5],[-1,-17,1,2.5,2.5],[-4,-22,1.5,2.5,2.5],
-    [-1,-27.5,1.5,3,3,{ax:3,spd:1.0}],[0,-33,2,2.2,2.2],[3,-38,2.5,2.2,2.2],
-    [3,-45,2.5,6,6,null,'check'],
-    [0,-51.5,3,2.6,2.6,{ax:3,spd:1.3}],[-3,-56.5,3.5,2.2,2.2],[0,-61.5,4,2.2,2.2,{az:1.2,spd:1.6}],[3,-66.5,4.5,2.2,2.2],
-    [0,-71.5,5,2.6,2.6,{ax:2.5,spd:1.7}],
-    [0,-79.5,5,8,8,null,'finish']
-  ];
-  let checkpoint = null;
-  defs.forEach((dd, i) => {
-    const [x,z,y,w,d,mv,tag] = dd;
-    const col = tag === 'finish' ? 0xffd23f : tag === 'check' ? 0x1ec95a : i === 0 ? 0x8a6bd1 : colors[i % colors.length];
-    const m = box(w, 1, d, col, x, y - 0.5, z, L);
-    const s = addSolid(m, {tag});
-    // candy symbol
-    const sym = ['○','△','□','☆'][i % 4];
-    if (!tag && i > 0){
-      const p = new THREE.Mesh(new THREE.PlaneGeometry(w*0.8, d*0.8), new THREE.MeshBasicMaterial({map:textTexture(sym,'#b0102a',null,64,64,'bold 54px sans-serif'), transparent:true}));
-      p.rotation.x = -Math.PI/2; p.position.y = 0.51; p.scale.set(1/w, 1/d, 1); m.add(p);
-    }
-    if (mv) dynamics.push({m, base:new THREE.Vector3(x, y-0.5, z), mv, ph: i});
-    if (tag === 'check'){ checkpoint = s; const pole = box(0.2, 3, 0.2, 0xffffff, x+2, y+1.5, z, L); const fl = box(1.2, 0.8, 0.1, 0x1ec95a, x+2.6, y+2.6, z, L); }
-    if (tag === 'finish'){
-      // trophy
-      box(1.6,0.4,1.6,0xc9a227,x,y+0.2,z-2,L); box(0.5,1.0,0.5,0xffd23f,x,y+0.9,z-2,L); box(1.6,1.4,1.6,0xffd23f,x,y+2.0,z-2,L);
-      box(0.3,0.8,0.3,0xffd23f,x-1,y+2.1,z-2,L); box(0.3,0.8,0.3,0xffd23f,x+1,y+2.1,z-2,L);
-      // giant dalgona cookie decor
-      const ck = new THREE.Mesh(new THREE.CylinderGeometry(6,6,0.6,32), mat(0xd9962e)); ck.position.set(x, y+5, z-8); ck.rotation.x = Math.PI/2; L.add(ck);
-      const um = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.MeshBasicMaterial({map:textTexture('☂','#7a4a10',null,128,128,'bold 110px sans-serif'),transparent:true}));
-      um.position.set(x, y+5, z-7.6); L.add(um);
-    }
-  });
+  box(200, 1, 220, 0xff7fb6, 0, -20, -50, L);
+  addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
+  addPlatform(L, 0, 0, -7.5, 2.6, 2.6, 0xffd23f, {move:{ax:3, spd:1.2}});
+  addDisc(L, 0, 0.5, -15, 3.5, 0xd9962e);
+  addSweeper(L, 0, 0.5, -15, 6.6, 1.5);
+  addDisc(L, -3, 1, -21, 1.6, 0x3bd0ff, 1.5);
+  addDisc(L, 1, 1.5, -26, 1.6, 0xb07cff, -1.8);
+  addPlatform(L, 0, 2, -33, 6, 6, 0x1ec95a, {tag:'check'});
+  addPlatform(L, 0, 2, -43, 1.8, 13, 0xff5a5a);       // narrow walkway
+  addSweeper(L, 0, 2, -39.5, 5, 2.2);
+  addSweeper(L, 0, 2, -46.5, 5, -2.6, 0x3b5bff);
+  addPlatform(L, 0, 2.5, -54, 2.4, 2.4, 0xffd23f, {move:{az:1.2, spd:1.5}});
+  addDisc(L, 3, 3, -60, 2.2, 0x1ec95a, 2.0);
+  addPlatform(L, 3, 3.5, -67, 6, 6, 0x1ec95a, {tag:'check'});
+  addPlatform(L, 0, 4, -74, 2.2, 2.2, 0xff9f2e, {move:{ax:3, spd:1.6}});
+  addPlatform(L, -3, 4.5, -79, 2.2, 2.2, 0x3bd0ff, {move:{ax:2.5, spd:2.0}});
+  addDisc(L, 0, 5, -86.5, 4, 0xd9962e, 0.5);
+  addSweeper(L, 0, 5, -86.5, 7.6, -1.4);
+  addPlatform(L, 0, 5, -95, 8, 8, 0xffd23f, {tag:'finish'});
+  addFinish(L, 0, 5, -95);
+  const ck = new THREE.Mesh(new THREE.CylinderGeometry(6,6,0.6,32), mat(0xd9962e)); ck.position.set(0, 12, -103); ck.rotation.x = Math.PI/2; L.add(ck);
+  const um = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.MeshBasicMaterial({map:textTexture('☂','#7a4a10',null,128,128,'bold 110px sans-serif'),transparent:true}));
+  um.position.set(0, 12, -102.6); L.add(um);
   player.spawn.set(0, 0, 1);
-  levelUpdate = (dt, t) => {
-    for (const dy of dynamics){
-      const k = Math.sin(t * dy.mv.spd + dy.ph);
-      dy.m.position.set(dy.base.x + (dy.mv.ax||0)*k, dy.base.y, dy.base.z + (dy.mv.az||0)*k);
-    }
-    if (!player.dead && player.pos.y < deathY) eliminate('掉下去了！', 'fall', 0.9);
-    if (player.grounded && player.ground && player.ground.tag === 'check' && player.spawn.z !== -45){
-      player.spawn.set(3, 2.5, -45); sfx.check(); showMsg('✅ 檢查點！', 1200, '#5dff8f');
-    }
-    if (player.grounded && player.ground && player.ground.tag === 'finish') completeLevel();
-  };
-  showMsg('第 3 關：椪糖跳台<small>跳過彩色跳台抵達獎盃！</small>', 2500, '#fff');
+  showMsg('第 3 關：椪糖跳台<small>小心旋轉平台和旋轉橫桿！跳過橫桿！</small>', 2600, '#fff');
 }
 
-const LEVEL_NAMES = {1:'第 1 關：一二三木頭人', 2:'第 2 關：玻璃橋', 3:'第 3 關：椪糖跳台'};
+function updateDynamics(dt, t){
+  for (const dy of dynamics){
+    if (dy.spin){ dy.m.rotation.y += dy.spin * dt; continue; }
+    const k = Math.sin(t * dy.mv.spd + dy.ph);
+    dy.m.position.set(dy.base.x + (dy.mv.ax||0)*k, dy.base.y, dy.base.z + (dy.mv.az||0)*k);
+  }
+  for (const sw of sweepers){
+    sw.a += sw.w * dt; sw.g.rotation.y = sw.a;
+    if (player.dead) continue;
+    const feet = player.pos.y - sw.top;
+    if (feet > 0.9 || feet < -2.5) continue;
+    const dx = player.pos.x - sw.x, dz = player.pos.z - sw.z;
+    const ca = Math.cos(sw.a), sa = Math.sin(sw.a);
+    const along = dx*ca - dz*sa, perp = dx*sa + dz*ca;
+    if (Math.abs(along) < sw.len/2 + 0.2 && Math.abs(perp) < 0.2 + R){
+      const dir = Math.sign(sw.w * along) || 1;   // direction the bar is moving at that point (along +perp axis = -dir?)
+      const px = sa, pz = ca;                     // world perpendicular axis
+      const push = -dir;                          // bar tip velocity = w × r → pointing along -perp for +w*along
+      player.pos.x = sw.x + along*ca + px*(push*(0.25+R));
+      player.pos.z = sw.z - along*sa + pz*(push*(0.25+R));
+      player.vel.x = px*push*11; player.vel.z = pz*push*11; player.vel.y = 6;
+      player.grounded = false; player.ground = null; player.knock = 0.6; sfx.hit();
+    }
+  }
+}
+
+const LEVEL_NAMES = {1:'第 1 關：跳格子踏石', 2:'第 2 關：玻璃橋', 3:'第 3 關：椪糖跳台（困難）'};
 function loadLevel(n){
   clearLevel();
   G.level = n; $('lvName').textContent = LEVEL_NAMES[n];
   [buildLevel1, buildLevel2, buildLevel3][n-1]();
   levelGroup.traverse(o => { if (o.isMesh && o.material && o.material.transparent) o.castShadow = false; });
+  player.checkpoint = null;
   respawn();
   G.state = 'playing';
 }
@@ -603,14 +549,13 @@ $('againBtn').addEventListener('click', () => startGame(1));
 $('restartTop').addEventListener('click', () => { if (confirm('確定要從第 1 關重新開始嗎？')) startGame(1); });
 
 // ---------- physics ----------
-const MOVE = 8, JUMP = 10.5, GRAV = 28, R = 0.45;
+const MOVE = 8, JUMP = 10.5, GRAV = 28;
 const tmpF = new THREE.Vector3(), tmpR = new THREE.Vector3();
 function updatePlayer(dt, t){
   const u = playerAvatar.userData;
   if (player.dead){
     player.deadT -= dt;
-    if (G.level !== 1){ player.vel.y -= GRAV*dt; player.pos.addScaledVector(player.vel, dt); }
-    else { u.body.rotation.x = Math.max(-Math.PI/2, u.body.rotation.x - dt*6); u.body.position.y = Math.min(0.3, u.body.position.y + dt); }
+    player.vel.y -= GRAV*dt; player.pos.addScaledVector(player.vel, dt); playerAvatar.position.copy(player.pos);
     if (player.deadT <= 0) respawn();
     return;
   }
@@ -618,6 +563,8 @@ function updatePlayer(dt, t){
   if (player.grounded && player.ground){
     const m = player.ground.mesh.position;
     player.pos.x += m.x - player.ground.lastX; player.pos.z += m.z - player.ground.lastZ;
+    if (player.ground.spin){ const a = player.ground.spin*dt, dx = player.pos.x - m.x, dz = player.pos.z - m.z, c = Math.cos(a), sn = Math.sin(a);
+      player.pos.x = m.x + dx*c + dz*sn; player.pos.z = m.z - dx*sn + dz*c; player.facing += a; }
   }
   let ix = 0, iy = 0;
   if (G.state === 'playing'){
@@ -629,7 +576,8 @@ function updatePlayer(dt, t){
   if (il < 0.12){ ix = iy = 0; il = 0; }
   tmpF.set(-Math.sin(camYaw), 0, -Math.cos(camYaw)); tmpR.set(Math.cos(camYaw), 0, -Math.sin(camYaw));
   const tx = (tmpF.x*iy + tmpR.x*ix) * MOVE, tz = (tmpF.z*iy + tmpR.z*ix) * MOVE;
-  const acc = Math.min(1, dt * (player.grounded ? 14 : 5));
+  player.knock -= dt;
+  const acc = Math.min(1, dt * (player.knock > 0 ? 0.8 : player.grounded ? 14 : 5));
   player.vel.x += (tx - player.vel.x) * acc; player.vel.z += (tz - player.vel.z) * acc;
   if (player.grounded) player.coyote = 0.1; else player.coyote -= dt;
   if (jumpQueued && player.coyote > 0 && G.state === 'playing'){ player.vel.y = JUMP; player.grounded = false; player.ground = null; player.coyote = 0; sfx.jump(); }
@@ -642,9 +590,12 @@ function updatePlayer(dt, t){
   for (const s of solids){
     if (!s.active) continue;
     const b = solidBounds(s);
-    const inXZ = player.pos.x > b.minx - R*0.6 && player.pos.x < b.maxx + R*0.6 && player.pos.z > b.minz - R*0.6 && player.pos.z < b.maxz + R*0.6;
+    const ddx = player.pos.x - s.mesh.position.x, ddz = player.pos.z - s.mesh.position.z, dd = Math.hypot(ddx, ddz);
+    const inXZ = s.disc ? dd < s.r + R*0.6 : (player.pos.x > b.minx - R*0.6 && player.pos.x < b.maxx + R*0.6 && player.pos.z > b.minz - R*0.6 && player.pos.z < b.maxz + R*0.6);
     if (inXZ && player.vel.y <= 0 && prevY >= b.top - 0.25 && player.pos.y <= b.top + 0.02){
       player.pos.y = b.top; player.vel.y = 0; player.grounded = true; newGround = s;
+    } else if (s.disc){
+      if (player.pos.y < b.top - 0.25 && player.pos.y + 2.8 > b.bottom && dd < s.r + R && dd > 1e-4){ const k = (s.r + R)/dd; player.pos.x = s.mesh.position.x + ddx*k; player.pos.z = s.mesh.position.z + ddz*k; }
     } else if (player.pos.y < b.top - 0.25 && player.pos.y + 2.8 > b.bottom){
       // side push
       const ox1 = (b.maxx + R) - player.pos.x, ox2 = player.pos.x - (b.minx - R);
@@ -658,7 +609,12 @@ function updatePlayer(dt, t){
   const landed = newGround && newGround !== player.ground;
   player.ground = newGround;
   if (landed && newGround.onLand) newGround.onLand();
-  if (G.level === 1){ player.pos.x = Math.max(-21, Math.min(21, player.pos.x)); player.pos.z = Math.max(-118, Math.min(18, player.pos.z)); }
+  if (landed && newGround.tag === 'check' && player.checkpoint !== newGround){
+    player.checkpoint = newGround; const b = solidBounds(newGround); player.spawn.set((b.minx+b.maxx)/2, b.top, (b.minz+b.maxz)/2);
+    sfx.check(); showMsg('🚩 檢查點！', 1200, '#5dff8f');
+  }
+  if (player.grounded && newGround && newGround.tag === 'finish') completeLevel();
+  if (!player.dead && player.pos.y < deathY) eliminate('掉下去了！', 'fall', 0.9);
   // avatar
   const hs = Math.hypot(player.vel.x, player.vel.z);
   if (hs > 0.5){ const target = Math.atan2(player.vel.x, player.vel.z); let d = target - player.facing; d = Math.atan2(Math.sin(d), Math.cos(d)); player.facing += d * Math.min(1, dt*12); }
@@ -675,6 +631,7 @@ function frame(now){
   const dt = Math.min(0.05, (now - last)/1000); last = now;
   const t = now/1000;
   if (G.state === 'playing' || G.state === 'transition'){
+    updateDynamics(dt, t);
     if (levelUpdate) levelUpdate(dt, t);
     updatePlayer(dt, t);
     storeLast();
@@ -683,7 +640,7 @@ function frame(now){
   } else if (G.state === 'menu' && !levelGroup){
     loadLevel(1); G.state = 'menu';
   } else if (G.state === 'menu'){
-    menuT += dt; camYaw = Math.sin(menuT*0.2)*0.6; if (levelUpdate) levelUpdate(dt, t);
+    menuT += dt; camYaw = Math.sin(menuT*0.2)*0.6; updateDynamics(dt, t);
   }
   camTarget.set(player.pos.x, Math.max(player.pos.y, deathY + 4) + 2.2, player.pos.z);
   const cp = Math.cos(camPitch);

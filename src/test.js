@@ -1,46 +1,39 @@
 const { chromium } = require('playwright-core');
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'] });
-  const errors = [];
-  const run = async (name, url, vp, fn, opts={}) => {
-    const ctx = await browser.newContext({ viewport: vp, hasTouch: !!opts.touch, isMobile: !!opts.touch, deviceScaleFactor: opts.dsf||1 });
-    const page = await ctx.newPage();
-    page.on('pageerror', e => errors.push(`[${name}] pageerror: ${e.message}`));
-    page.on('console', m => { if (m.type()==='error') errors.push(`[${name}] console: ${m.text()}`); });
-    await page.goto(url); await page.waitForTimeout(1500);
-    if (fn) await fn(page);
-    await page.screenshot({ path: `/workspace/squid-obby/screenshots/${name}.png` });
-    const st = await page.evaluate(() => ({state: __game.state, level: __game.level, deaths: __game.deaths}));
-    console.log(name, JSON.stringify(st));
-    await ctx.close();
-  };
-  const B = 'http://localhost:8765/index.html';
-  await run('00-start', B, {width:1280,height:720});
-  await run('01-level1', B, {width:1280,height:720}, async p => {
-    await p.click('#startBtn'); await p.keyboard.down('KeyW'); await p.waitForTimeout(2500); await p.keyboard.up('KeyW'); await p.waitForTimeout(300);
-  });
-  // stand still through cycles then move during red -> expect deaths
-  await run('01b-level1-red', B, {width:1280,height:720}, async p => {
-    await p.click('#startBtn'); await p.keyboard.down('KeyW'); await p.waitForTimeout(9000); await p.keyboard.up('KeyW');
-  });
-  await run('02-level2', B+'?level=2', {width:1280,height:720}, async p => {
-    await p.waitForTimeout(800); await p.keyboard.down('KeyW'); await p.waitForTimeout(350); await p.keyboard.press('Space'); await p.waitForTimeout(600); await p.keyboard.up('KeyW'); await p.waitForTimeout(400);
-  });
-  await run('03-level3', B+'?level=3', {width:1280,height:720}, async p => {
-    await p.waitForTimeout(800); await p.keyboard.down('KeyW'); await p.waitForTimeout(400); await p.keyboard.press('Space'); await p.waitForTimeout(500); await p.keyboard.up('KeyW');
-  });
-  // force-win via teleport to finish of level3
-  await run('04-win', B+'?level=3', {width:1280,height:720}, async p => {
-    await p.waitForTimeout(500);
-    await p.evaluate(() => {}); 
-    await p.keyboard.press('Space');
-    await p.evaluate(() => { window.__tp = true; });
-  });
-  await run('05-ipad-portrait-touch', B+'?level=1&touch=1', {width:820,height:1180}, async p => {
-    const j = await p.$('#joy'); const b = await j.boundingBox();
-    await p.waitForTimeout(500);
-  }, {touch:true, dsf:2});
-  await run('06-ipad-landscape-touch', B+'?level=2&touch=1', {width:1180,height:820}, null, {touch:true, dsf:2});
-  console.log('ERRORS:', errors.length); errors.forEach(e => console.log(e));
-  await browser.close();
+  const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
+  const errors = []; const B = 'http://localhost:8765/index.html'; const S = '/workspace/squid-obby/screenshots/';
+  const mk = async (opts={}) => { const ctx = await browser.newContext({viewport: opts.vp||{width:1280,height:720}, hasTouch:!!opts.touch, isMobile:!!opts.touch, deviceScaleFactor: opts.dsf||1});
+    const p = await ctx.newPage(); p.on('pageerror', e => errors.push('pageerror '+e.message)); p.on('console', m => { if (m.type()==='error') errors.push('console '+m.text()); }); return [ctx,p]; };
+  const st = p => p.evaluate(() => JSON.stringify({s:__game.state, l:__game.level, d:__game.deaths, pos:__game.player.pos, spawn:__game.player.spawn, g:__game.player.grounded}));
+  const tp = (p,x,y,z) => p.evaluate(([x,y,z]) => { __game.player.pos.set(x,y,z); __game.player.vel.set(0,0,0); }, [x,y,z]);
+  let [c,p] = await mk(); await p.goto(B); await p.waitForTimeout(1500); await p.screenshot({path:S+'00-start.png'});
+  await p.click('#startBtn'); await p.waitForTimeout(600);
+  await p.keyboard.down('KeyW'); await p.waitForTimeout(500); await p.keyboard.press('Space'); await p.waitForTimeout(250); await p.keyboard.up('KeyW');
+  await p.waitForTimeout(500); await p.screenshot({path:S+'01-level1.png'}); console.log('L1 walk', await st(p));
+  await tp(p,0,1,-31); await p.waitForTimeout(400); console.log('L1 checkpoint', await st(p));
+  await tp(p,8,1,-40); await p.waitForTimeout(1800); console.log('L1 fell -> respawn', await st(p));
+  await tp(p,0,3,-61); await p.waitForTimeout(600); await p.screenshot({path:S+'01b-level1-stones.png'});
+  await tp(p,0,4,-84); await p.waitForTimeout(3500); console.log('L1 finish ->', await st(p));
+  await p.waitForTimeout(500); await p.keyboard.down('KeyW'); await p.waitForTimeout(350); await p.keyboard.press('Space'); await p.waitForTimeout(500); await p.keyboard.up('KeyW'); await p.waitForTimeout(600);
+  await p.screenshot({path:S+'02-level2.png'}); console.log('L2', await st(p));
+  const mid = await p.evaluate(() => -6 - 5*3.5 - 2.3/2 - 1.15 - 2);
+  await tp(p,0,1,mid); await p.waitForTimeout(500); console.log('L2 checkpoint', await st(p));
+  await tp(p,0,1,-60); await p.waitForTimeout(800); await p.screenshot({path:S+'02b-level2-checkpoint.png'});
+  await p.waitForTimeout(2800); console.log('L2 finish ->', await st(p));
+  await p.waitForTimeout(800); await p.screenshot({path:S+'03-level3.png'});
+  await tp(p,0,3,-33); await p.waitForTimeout(400);
+  await tp(p,0,2.5,-39.5); await p.waitForTimeout(1500); console.log('L3 sweeper hit', await st(p));
+  await tp(p,0,3,-36); await p.waitForTimeout(700); await p.screenshot({path:S+'03b-level3-sweepers.png'});
+  await tp(p,0,6,-86.5); await p.waitForTimeout(300); await p.screenshot({path:S+'03c-level3-spinner.png'});
+  await tp(p,0,6,-95); await p.waitForTimeout(4500); console.log('L3 finish ->', await st(p)); await p.screenshot({path:S+'04-win.png'});
+  await c.close();
+  [c,p] = await mk({touch:true, vp:{width:820,height:1180}, dsf:2}); await p.goto(B+'?level=1&touch=1'); await p.waitForTimeout(1500); await p.screenshot({path:S+'05-ipad-portrait-touch.png'});
+  const cdp = await c.newCDPSession(p); const bb = await (await p.$('#joy')).boundingBox(); const cx = bb.x+bb.width/2, cy = bb.y+bb.height/2;
+  const z0 = await p.evaluate(() => __game.player.pos.z);
+  await cdp.send('Input.dispatchTouchEvent', {type:'touchStart', touchPoints:[{x:cx,y:cy,id:1}]});
+  for (let i=1;i<=5;i++){ await cdp.send('Input.dispatchTouchEvent', {type:'touchMove', touchPoints:[{x:cx,y:cy-12*i,id:1}]}); await p.waitForTimeout(30); }
+  await p.waitForTimeout(300); console.log('touch z', z0, '->', await p.evaluate(() => __game.player.pos.z));
+  await cdp.send('Input.dispatchTouchEvent', {type:'touchEnd', touchPoints:[]}); await c.close();
+  [c,p] = await mk({touch:true, vp:{width:1180,height:820}, dsf:2}); await p.goto(B+'?level=3&touch=1'); await p.waitForTimeout(1500); await p.screenshot({path:S+'06-ipad-landscape-touch.png'}); await c.close();
+  console.log('ERRORS', errors.length, errors.join('\n')); await browser.close();
 })();
