@@ -62,7 +62,7 @@ Debug URL params: `?level=1..5`, `&char=noob|bacon|kara`, `&lang=en|zh`.
 This is an **unofficial, fan-made game**. It is not affiliated with, endorsed by, or connected to Netflix, the *Squid Game* series, or Roblox Corporation. All game code and art here are original.
 
 ## License
-[MIT](LICENSE)
+[MIT](LICENSE). Bundled [three.js](https://github.com/mrdoob/three.js) is © three.js authors, also under the MIT license.
 
 ---
 
