@@ -9,7 +9,7 @@ const { chromium } = require('playwright-core');
   for (let lv=1; lv<=5; lv++){
     await p.goto(B+`?level=${lv}`); await p.waitForTimeout(700);
     const res = await p.evaluate((lv) => {
-      const G = __game, sol = G.solids().filter(s => s.active), dyn = G.dynamics();
+      const G = __game, sol = G.solids().filter(s => s.active && !s.post), dyn = G.dynamics();
       const posAt = (s, t) => { const d = dyn.find(d => d.m === s.mesh && d.mv); const p = s.mesh.position;
         if (!d) return [p.x, p.z]; const k = Math.sin(t*d.mv.spd + d.ph); return [d.base.x + (d.mv.ax||0)*k, d.base.z + (d.mv.az||0)*k]; };
       const top = s => s.mesh.position.y + (s.disc ? 0.5 : s.mesh.scale.y/2);
