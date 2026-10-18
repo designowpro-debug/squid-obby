@@ -1,13 +1,28 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#e8336d">
-<link rel="icon" href="data:,">
-<title>魷魚遊戲 闖關挑戰 (Squid Obby)</title>
+<title>Squid Obby – 3D Jump & Run Fan Game</title>
+<meta name="description" content="Squid Obby: a free Roblox-style 3D obby fan game in your browser. 5 levels – hopscotch, glass bridge, dalgona jumps, marble spin and a final showdown. 3 characters, works on iPad and phones. English / 中文.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Squid Obby">
+<meta property="og:title" content="Squid Obby – 3D Jump & Run Fan Game">
+<meta property="og:description" content="Free browser obby: 5 levels, 3 blocky characters, glass bridge, spinning bars. Play instantly on desktop, iPad or phone.">
+<meta property="og:url" content="https://designowpro-debug.github.io/squid-obby/">
+<meta property="og:image" content="https://designowpro-debug.github.io/squid-obby/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Squid Obby – 3D Jump & Run Fan Game">
+<meta name="twitter:description" content="Free browser obby: 5 levels, 3 blocky characters, glass bridge, spinning bars. Play on desktop, iPad or phone.">
+<meta name="twitter:image" content="https://designowpro-debug.github.io/squid-obby/og-image.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#111;position:fixed;inset:0;
     overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
@@ -71,38 +86,46 @@
   #pop{top:30%;left:50%;transform:translate(-50%,0);font-size:40px;font-weight:900;opacity:0}
   #pop.show{animation:pop 0.9s ease-out}
   @keyframes pop{0%{opacity:1;transform:translate(-50%,10px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-40px) scale(1)}}
-  #restartTop{position:fixed;z-index:7;top:calc(10px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));font-size:15px;
+  #langBtn{position:fixed;z-index:30;top:calc(10px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));font-size:15px;
+    padding:8px 12px;border-radius:12px;border:2px solid #fff;background:rgba(0,0,0,.45);color:#fff;font-family:inherit;font-weight:700;touch-action:manipulation;cursor:pointer}
+  .disc{font-size:12px!important;opacity:.75;margin-top:14px!important}
+  .screen .sub{font-size:20px;font-weight:700;margin:0 0 10px;letter-spacing:2px}
+  #restartTop{position:fixed;z-index:7;top:calc(54px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));font-size:15px;
     padding:8px 12px;border-radius:12px;border:2px solid #fff;background:rgba(0,0,0,.4);color:#fff;font-family:inherit;font-weight:700;touch-action:manipulation}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="flash"></div>
-<div id="hudL" class="hud hidden"><div class="lv" id="lvName">第 1 關</div><div id="hpWrap">❤️ 生命 <span id="hpNum">100</span><div id="hp"><i id="hpFill"></i></div></div><div>💀 淘汰次數：<span id="deaths">0</span></div><div>⏱ 總時間：<span id="time">0.0</span> 秒</div><div>🧍 角色：<span id="charName">菜鳥</span></div><div id="stamWrap" class="hidden">⚡ 體力<div id="stam"><i id="stamFill"></i></div></div></div>
+<div id="hudL" class="hud hidden"><div class="lv" id="lvName">Level 1</div><div id="hpWrap"><span data-i18n="hp">❤️ HP</span> <span id="hpNum">100</span><div id="hp"><i id="hpFill"></i></div></div><div><span data-i18n="deaths"></span><span id="deaths">0</span></div><div><span data-i18n="time"></span><span id="time">0.0</span><span data-i18n="sec"></span></div><div><span data-i18n="char"></span><span id="charName"></span></div><div id="stamWrap" class="hidden"><span data-i18n="stamina"></span><div id="stam"><i id="stamFill"></i></div></div></div>
 <div id="msg" class="hud"></div>
 <div id="pop" class="hud"></div>
-<button id="restartTop" class="hidden">↻ 重新開始</button>
-<div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint">拖曳畫面轉視角</div><div id="jumpBtn">跳</div><div id="dashBtn" class="hidden">衝</div></div>
+<button id="langBtn">🌐 中文</button>
+<button id="restartTop" class="hidden" data-i18n="restart"></button>
+<div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint" data-i18n="camHint"></div><div id="jumpBtn" data-i18n="jump"></div><div id="dashBtn" class="hidden" data-i18n="dash"></div></div>
 
 <div id="startScreen" class="screen">
   <div class="shapes">○△□</div>
-  <h1>魷魚遊戲 闖關挑戰</h1>
-  <p>五道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b> → <b>彈珠迴旋</b> → <b>魷魚決戰</b>，活著抵達終點！掉下去會回到檢查點 🚩</p>
-  <p>⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍（培根頭可二段跳）、Shift 衝刺（小咔啦）、滑鼠拖曳轉動視角</p>
-  <p>📱 平板／手機：左下搖桿移動、右下「跳」按鈕、「衝」按鈕（小咔啦）、拖曳畫面轉動視角</p>
-  <button class="btn" id="startBtn">開始遊戲</button>
+  <h1 data-i18n="title"></h1>
+  <div class="sub" data-i18n="subtitle"></div>
+  <p data-i18n-html="startDesc"></p>
+  <p data-i18n="ctrlPC"></p>
+  <p data-i18n="ctrlTouch"></p>
+  <button class="btn" id="startBtn" data-i18n="start"></button>
+  <p class="disc" data-i18n="disclaimer"></p>
 </div>
 <div id="charScreen" class="screen hidden">
-  <h1 style="font-size:min(9vw,48px)">選擇角色</h1>
-  <p>點選一位角色開始挑戰（五道關卡）</p>
+  <h1 style="font-size:min(9vw,48px)" data-i18n="chooseChar"></h1>
+  <p data-i18n="chooseSub"></p>
   <div class="cards" id="cards"></div>
 </div>
 <div id="winScreen" class="screen hidden">
   <div class="shapes">🏆</div>
-  <h1>恭喜通關！</h1>
-  <p style="font-size:24px">總時間：<b id="winTime">0</b></p>
-  <p style="font-size:24px">淘汰次數：<b id="winDeaths">0</b></p>
-  <button class="btn" id="againBtn">再玩一次（重選角色）</button>
+  <h1 data-i18n="winTitle"></h1>
+  <p style="font-size:24px"><span data-i18n="totalTime"></span><b id="winTime">0</b></p>
+  <p style="font-size:24px"><span data-i18n="deathsW"></span><b id="winDeaths">0</b></p>
+  <button class="btn" id="againBtn" data-i18n="again"></button>
+  <p class="disc" data-i18n="disclaimer"></p>
 </div>
 
 <script>/*THREE_JS*/</script>
@@ -111,6 +134,80 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// ---------- i18n (default English) ----------
+const I18N = {
+  en: {
+    docTitle: 'Squid Obby – 3D Jump & Run Fan Game',
+    title: 'SQUID OBBY', subtitle: '3D Jump & Run Challenge',
+    startDesc: 'Five obby levels: <b>Hopscotch Stones</b> → <b>Glass Bridge</b> → <b>Dalgona Jumps</b> → <b>Marble Spin</b> → <b>Final Showdown</b>. Reach the goal alive! Fall and you return to the last checkpoint 🚩',
+    ctrlPC: '⌨️ Computer: WASD / arrow keys to move, Space to jump (Bacon Hair can double jump), Shift to sprint (Crispy Kara), drag the mouse to look around',
+    ctrlTouch: '📱 Tablet / phone: joystick bottom-left, “Jump” button bottom-right, “Dash” button (Crispy Kara), drag the screen to look around',
+    disclaimer: 'Unofficial fan-made game. Not affiliated with Netflix or Roblox.',
+    start: 'Play', chooseChar: 'Choose Your Character', chooseSub: 'Tap a character to start (5 levels)',
+    winTitle: 'You Win!', totalTime: 'Total time: ', deathsW: 'Deaths: ', again: 'Play Again (choose character)',
+    restart: '↻ Restart', camHint: 'Drag screen to look', jump: 'Jump', dash: 'Dash',
+    hp: '❤️ HP', deaths: '💀 Deaths: ', time: '⏱ Time: ', sec: ' s', char: '🧍 Character: ', stamina: '⚡ Stamina',
+    backToCheck: 'Back to the last checkpoint', lvClear: n => `Level ${n} Clear!`, nextLv: 'Get ready for the next level…',
+    winMsg: '🏆 You Win!', timeFmt: (m, s) => `${m}m ${s}s`, fell: 'You Fell!', hpZero: 'Out of HP!', checkpoint: '🚩 Checkpoint!',
+    confirmRestart: 'Restart from Level 1 and choose a character again?', speed: 'Speed', jumpStat: 'Jump', goal: 'GOAL', prize: '₩45.6B',
+    lv: ['', 'Level 1: Hopscotch Stones', 'Level 2: Glass Bridge', 'Level 3: Dalgona Jumps', 'Level 4: Marble Spin', 'Level 5: Final Showdown'],
+    tip: ['', 'Hop across the squares and stones. Fall in the water and you go back to a checkpoint.',
+      'Two glass panels per row — only one is tempered glass!',
+      'Spinning bars cost HP. Grab ❤️ hearts to heal!',
+      'Spinning marble discs and a bar walkway. Watch your HP!',
+      'Final level! The spinning cross bar hurts. Survive to the end!'],
+    names: {noob:'Noob', bacon:'Bacon Hair', kara:'Crispy Kara'},
+    ab: {noob:'No ability: walks extra slowly and jumps low', bacon:'Jump master: jumps higher and can DOUBLE JUMP in the air', kara:'Sprint: runs fast; hold Shift / “Dash” to sprint (uses stamina)'},
+    tag: {noob:'Hard mode', bacon:'Normal', kara:'Easy'},
+    lang: '中文'
+  },
+  zh: {
+    docTitle: '魷魚闖關 Squid Obby – 3D 跳躍闖關（粉絲自製）',
+    title: '魷魚闖關', subtitle: 'Squid Obby 3D 跳躍挑戰',
+    startDesc: '五道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b> → <b>彈珠迴旋</b> → <b>最終決戰</b>，活著抵達終點！掉下去會回到檢查點 🚩',
+    ctrlPC: '⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍（培根頭可二段跳）、Shift 衝刺（小咔啦）、滑鼠拖曳轉動視角',
+    ctrlTouch: '📱 平板／手機：左下搖桿移動、右下「跳」按鈕、「衝」按鈕（小咔啦）、拖曳畫面轉動視角',
+    disclaimer: '非官方粉絲自製遊戲，與 Netflix 或 Roblox 無關。',
+    start: '開始遊戲', chooseChar: '選擇角色', chooseSub: '點選一位角色開始挑戰（五道關卡）',
+    winTitle: '恭喜通關！', totalTime: '總時間：', deathsW: '淘汰次數：', again: '再玩一次（重選角色）',
+    restart: '↻ 重新開始', camHint: '拖曳畫面轉視角', jump: '跳', dash: '衝',
+    hp: '❤️ 生命', deaths: '💀 淘汰次數：', time: '⏱ 總時間：', sec: ' 秒', char: '🧍 角色：', stamina: '⚡ 體力',
+    backToCheck: '回到檢查點重新挑戰', lvClear: n => `第 ${n} 關 過關！`, nextLv: '準備進入下一關…',
+    winMsg: '🏆 通關！', timeFmt: (m, s) => `${m} 分 ${s} 秒`, fell: '掉下去了！', hpZero: '生命歸零！', checkpoint: '🚩 檢查點！',
+    confirmRestart: '確定要重新開始並重新選擇角色嗎？', speed: '速度', jumpStat: '跳躍', goal: '終點', prize: '₩456億',
+    lv: ['', '第 1 關：跳格子踏石', '第 2 關：玻璃橋', '第 3 關：椪糖跳台', '第 4 關：彈珠迴旋', '第 5 關：最終決戰'],
+    tip: ['', '跳過格子與踏石，掉進水裡會回到檢查點', '每排兩片玻璃，只有一片是強化玻璃！', '被旋轉橫桿打到會扣血，吃 ❤️ 補血！', '旋轉彈珠盤＋橫桿走道，小心扣血！', '最終關！十字旋轉桿會扣血，撐到最後！'],
+    names: {noob:'菜鳥', bacon:'培根頭', kara:'小咔啦'},
+    ab: {noob:'無特殊能力：走得特別慢、跳得低', bacon:'跳躍高手：跳得更高，空中可「二段跳」', kara:'衝刺：跑得快，按住 Shift／「衝」加速衝刺（消耗體力）'},
+    tag: {noob:'困難模式', bacon:'普通', kara:'簡單'},
+    lang: 'EN'
+  }
+};
+let LANG = (() => {
+  const q = (params.get('lang') || '').toLowerCase();
+  if (q.startsWith('zh')) return 'zh'; if (q.startsWith('en')) return 'en';
+  try { const s = localStorage.getItem('squidObbyLang'); if (s === 'zh' || s === 'en') return s; } catch(e){}
+  return 'en';
+})();
+const tr = (k, ...a) => { const v = I18N[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
+const signs = []; // 3D text signs that follow the language
+function signTexture(key, fg, bg, w, h, font){ return textTexture(I18N[LANG][key], fg, bg, w, h, font); }
+function addSign(material, key, fg, bg, w, h, font){ material.map = signTexture(key, fg, bg, w, h, font); signs.push({material, key, fg, bg, w, h, font}); return material; }
+let lastWin = null;
+function applyLang(){
+  document.documentElement.lang = LANG === 'zh' ? 'zh-Hant' : 'en';
+  document.title = tr('docTitle');
+  document.querySelectorAll('[data-i18n]').forEach(e => { e.textContent = tr(e.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(e => { e.innerHTML = tr(e.dataset.i18nHtml); });
+  $('langBtn').textContent = '🌐 ' + tr('lang');
+  if (G.level) $('lvName').textContent = tr('lv')[G.level];
+  if (typeof CH !== 'undefined' && CH) $('charName').textContent = tr('names')[charKey];
+  for (const s of signs){ if (s.material.map) s.material.map.dispose(); s.material.map = signTexture(s.key, s.fg, s.bg, s.w, s.h, s.font); s.material.needsUpdate = true; }
+  if (!$('charScreen').classList.contains('hidden')) renderCards();
+  if (lastWin) $('winTime').textContent = tr('timeFmt', lastWin[0], lastWin[1]);
+}
+function setLang(l){ LANG = l; try { localStorage.setItem('squidObbyLang', l); } catch(e){} applyLang(); }
+
 const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || params.has('touch');
 
 // ---------- prevent page scroll / zoom (iPad Safari) ----------
@@ -319,13 +416,13 @@ const player = { pos:new THREE.Vector3(), vel:new THREE.Vector3(), grounded:fals
 const CHARS = {
   noob:  {name:'菜鳥',  move:6.0, jump:9.2,  dbl:false, sprint:0,
           look:{suit:0x2a6fdb, arms:0xffd23f, skin:0xffd23f, pants:0x5fb83a, shoes:0x5fb83a, stripes:false, num:'001'},
-          spd:1, jmp:1, ab:'無特殊能力：走得特別慢、跳得低', tag:'困難模式', tagC:'#e8202a'},
+          spd:1, jmp:1, tagC:'#e8202a'},
   bacon: {name:'培根頭', move:8.0, jump:12.0, dbl:true, sprint:0,
           look:{suit:0x16a8a0, skin:0xf5c99b, num:'456', bacon:true},
-          spd:3, jmp:5, ab:'跳躍高手：跳得更高，空中可「二段跳」', tag:'普通', tagC:'#1ec95a'},
+          spd:3, jmp:5, tagC:'#1ec95a'},
   kara:  {name:'小咔啦', move:9.0, jump:10.5, dbl:false, sprint:1.6,
           look:{suit:0xe8a33d, arms:0xe8a33d, skin:0xffe0bd, pants:0xc0392b, cap:0xd62828, num:'218'},
-          spd:5, jmp:3, ab:'衝刺：跑得快，按住 Shift／「衝」加速衝刺（消耗體力）', tag:'簡單', tagC:'#3bd0ff'}
+          spd:5, jmp:3, tagC:'#3bd0ff'}
 };
 let charKey = CHARS[params.get('char')] ? params.get('char') : 'bacon';
 let CH = CHARS[charKey];
@@ -336,7 +433,7 @@ function setCharacter(k){
   if (playerAvatar) scene.remove(playerAvatar);
   playerAvatar = makeAvatar(CH.look); scene.add(playerAvatar);
   playerAvatar.traverse(o => { if (o.isMesh) o.castShadow = true; });
-  $('charName').textContent = CH.name;
+  $('charName').textContent = tr('names')[k];
   $('stamWrap').classList.toggle('hidden', !CH.sprint);
   $('dashBtn').classList.toggle('hidden', !CH.sprint);
   G.char = k;
@@ -357,7 +454,7 @@ function solidBounds(s){
 function clearLevel(){
   if (levelGroup){ scene.remove(levelGroup); levelGroup.traverse(o => { if (o.geometry && o.geometry !== unitBox && o.geometry !== addPickup.geo) o.geometry.dispose(); }); }
   levelGroup = new THREE.Group(); scene.add(levelGroup);
-  solids = []; dynamics = []; shards = []; sweepers = []; pickups = []; levelUpdate = null; onRespawn = null;
+  solids = []; dynamics = []; shards = []; sweepers = []; pickups = []; signs.length = 0; levelUpdate = null; onRespawn = null;
 }
 function showMsg(html, ms=1500, color='#fff'){
   const m = $('msg'); m.innerHTML = html; m.style.color = color; m.style.display = 'block';
@@ -372,28 +469,28 @@ function respawn(){
   playerAvatar.rotation.set(0, Math.PI, 0); playerAvatar.userData.body.rotation.set(0,0,0); playerAvatar.userData.body.position.set(0,0,0);
   if (onRespawn) onRespawn();
 }
-function eliminate(text='淘汰！', sound='shot', delay=1.4){
+function eliminate(text='', sound='shot', delay=1.4){
   if (player.dead || G.state !== 'playing') return;
   player.dead = true; player.deadT = delay; G.deaths++; $('deaths').textContent = G.deaths;
   sfx[sound] && sfx[sound](); flash();
-  showMsg(text + '<small>回到檢查點重新挑戰</small>', delay*1000, '#ff4a4a');
+  showMsg(text + '<small>' + tr('backToCheck') + '</small>', delay*1000, '#ff4a4a');
 }
 function completeLevel(){
   if (G.state !== 'playing') return;
   G.state = 'transition'; sfx.win();
   if (G.level >= 5){
     G.totalTime = (performance.now() - G.runStart)/1000;
-    showMsg('🏆 通關！', 1800, '#ffd23f');
+    showMsg(tr('winMsg'), 1800, '#ffd23f');
     setTimeout(showWin, 1800);
   } else {
-    showMsg(`第 ${G.level} 關 過關！<small>準備進入下一關…</small>`, 2200, '#5dff8f');
+    showMsg(`${tr('lvClear', G.level)}<small>${tr('nextLv')}</small>`, 2200, '#5dff8f');
     setTimeout(() => loadLevel(G.level + 1), 2300);
   }
 }
 function showWin(){
   G.state = 'win';
   const t = G.totalTime, mm = Math.floor(t/60), ss = (t%60).toFixed(1);
-  $('winTime').textContent = `${mm} 分 ${ss} 秒`; $('winDeaths').textContent = G.deaths;
+  lastWin = [mm, ss]; $('winTime').textContent = tr('timeFmt', mm, ss); $('winDeaths').textContent = G.deaths;
   $('winScreen').classList.remove('hidden'); $('restartTop').classList.add('hidden');
 }
 
@@ -432,7 +529,7 @@ function addSweeper(L, x, top, z, len, w, color=0xe8202a, a0=null){
 function addFinish(L, x, top, z){
   // goal arch + trophy
   box(0.6, 5, 0.6, 0xffffff, x - 3.2, top + 2.5, z + 2, L); box(0.6, 5, 0.6, 0xffffff, x + 3.2, top + 2.5, z + 2, L);
-  const ban = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.4), new THREE.MeshBasicMaterial({map:textTexture('終點 GOAL','#fff','#e8336d',256,52,'bold 36px sans-serif'), side:THREE.DoubleSide}));
+  const ban = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.4), addSign(new THREE.MeshBasicMaterial({side:THREE.DoubleSide}), 'goal', '#fff', '#e8336d', 256, 52, 'bold 36px sans-serif'));
   ban.position.set(x, top + 4.6, z + 2); L.add(ban);
   box(1.6,0.4,1.6,0xc9a227,x,top+0.2,z-2,L); box(0.5,1.0,0.5,0xffd23f,x,top+0.9,z-2,L); box(1.6,1.4,1.6,0xffd23f,x,top+2.0,z-2,L);
   box(0.3,0.8,0.3,0xffd23f,x-1,top+2.1,z-2,L); box(0.3,0.8,0.3,0xffd23f,x+1,top+2.1,z-2,L);
@@ -472,7 +569,7 @@ function buildLevel1(){
   addPlatform(L, 0, 2.4, -84, 8, 8, 0xffd23f, {tag:'finish'});
   addFinish(L, 0, 2.4, -84);
   player.spawn.set(0, 0, 1);
-  showMsg('第 1 關：跳格子踏石<small>跳過格子與踏石，掉進水裡會回到檢查點</small>', 2600, '#fff');
+  showMsg(tr('lv')[1] + '<small>' + tr('tip')[1] + '</small>', 2600, '#fff');
 }
 
 // ======================= LEVEL 2: 玻璃橋 =======================
@@ -525,7 +622,7 @@ function buildLevel2(){
     else { breakPanel(p); player.grounded = false; player.ground = null; }
   }
   player.spawn.set(0, 0, 1);
-  showMsg('第 2 關：玻璃橋<small>每排兩片玻璃，只有一片是強化玻璃！</small>', 2500, '#9fe8ff');
+  showMsg(tr('lv')[2] + '<small>' + tr('tip')[2] + '</small>', 2600, '#9fe8ff');
 }
 
 // ======================= LEVEL 3: 椪糖跳台 =======================
@@ -558,7 +655,7 @@ function buildLevel3(){
   const um = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.MeshBasicMaterial({map:textTexture('☂','#7a4a10',null,128,128,'bold 110px sans-serif'),transparent:true}));
   um.position.set(0, 10, -84.6); L.add(um);
   player.spawn.set(0, 0, 1);
-  showMsg('第 3 關：椪糖跳台<small>被旋轉橫桿打到會扣血，吃 ❤️ 補血！</small>', 2600, '#fff');
+  showMsg(tr('lv')[3] + '<small>' + tr('tip')[3] + '</small>', 2600, '#fff');
 }
 
 // ======================= LEVEL 4: 彈珠迴旋 =======================
@@ -593,7 +690,7 @@ function buildLevel4(){
   addPlatform(L, 0, 3.5, -81, 8, 8, 0xffd23f, {tag:'finish'});
   addFinish(L, 0, 3.5, -81);
   player.spawn.set(0, 0, 1);
-  showMsg('第 4 關：彈珠迴旋<small>旋轉彈珠盤＋橫桿走道，小心扣血！</small>', 2600, '#fff');
+  showMsg(tr('lv')[4] + '<small>' + tr('tip')[4] + '</small>', 2600, '#fff');
 }
 
 // ======================= LEVEL 5: 魷魚決戰 =======================
@@ -604,7 +701,7 @@ function buildLevel5(){
   box(200, 1, 220, 0x3a0a14, 0, -20, -50, L);
   const neon = (txt, col, x, y, z, s) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(s, s), new THREE.MeshBasicMaterial({map:textTexture(txt, col, null, 128, 128, 'bold 110px sans-serif'), transparent:true, fog:false})); p.position.set(x, y, z); L.add(p); };
   neon('○', '#ff3b8d', -16, 8, -30, 14); neon('△', '#3bd0ff', 16, 8, -55, 14); neon('□', '#ffd23f', -16, 8, -80, 14);
-  neon('₩456億', '#ffd23f', 0, 12, -108, 22);
+  { const p = new THREE.Mesh(new THREE.PlaneGeometry(22, 22), addSign(new THREE.MeshBasicMaterial({transparent:true, fog:false}), 'prize', '#ffd23f', null, 128, 128, 'bold 30px sans-serif')); p.position.set(0, 12, -108); L.add(p); }
   addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
   addPlatform(L, 0, 0, -7, 3.4, 3.4, 0xe8336d, {move:{ax:1.8, spd:0.8}});
   addDisc(L, 0, 0.5, -12.5, 2.6, 0x3bd0ff, 0.6);
@@ -634,7 +731,7 @@ function buildLevel5(){
   box(3, 2.2, 2, 0xffc0d8, 0, 1.6, 0, pig); box(1, 0.8, 0.6, 0xff9fc0, 0, 1.5, 1.2, pig); box(1.6, 0.2, 0.4, 0xffd23f, 0, 2.75, 0, pig);
   [[-1,-0.6],[1,-0.6],[-1,0.6],[1,0.6]].forEach(([x,z]) => box(0.5, 0.6, 0.5, 0xffc0d8, x, 0.3, z, pig));
   player.spawn.set(0, 0, 1);
-  showMsg('第 5 關：魷魚決戰<small>最終關！十字旋轉桿會扣血，撐到最後！</small>', 2600, '#ff3b8d');
+  showMsg(tr('lv')[5] + '<small>' + tr('tip')[5] + '</small>', 2600, '#ff3b8d');
 }
 
 // ---------- healing pickups (♥ heart) ----------
@@ -681,7 +778,7 @@ function damage(n){
   setHP(player.hp - n); player.invuln = 1.2; player.stagger = 0.35; sfx.hit(); popText('-' + n + ' ❤️', '#ff4a4a');
   const f = $('flash'); f.style.background = '#f00'; f.style.transition = 'none'; f.style.opacity = 0.3; requestAnimationFrame(() => { f.style.transition = 'opacity .5s'; f.style.opacity = 0; });
   $('hpWrap').classList.remove('shake'); void $('hpWrap').offsetWidth; $('hpWrap').classList.add('shake');
-  if (player.hp <= 0) eliminate('生命歸零！', 'shot', 1.2);
+  if (player.hp <= 0) eliminate(tr('hpZero'), 'shot', 1.2);
 }
 
 function updateDynamics(dt, t){
@@ -706,10 +803,10 @@ function updateDynamics(dt, t){
   }
 }
 
-const LEVEL_NAMES = {1:'第 1 關：跳格子踏石', 2:'第 2 關：玻璃橋', 3:'第 3 關：椪糖跳台', 4:'第 4 關：彈珠迴旋', 5:'第 5 關：魷魚決戰（最終關）'};
+
 function loadLevel(n){
   clearLevel();
-  G.level = n; $('lvName').textContent = LEVEL_NAMES[n];
+  G.level = n; $('lvName').textContent = tr('lv')[n];
   [buildLevel1, buildLevel2, buildLevel3, buildLevel4, buildLevel5][n-1]();
   levelGroup.traverse(o => { if (o.isMesh && o.material && o.material.transparent) o.castShadow = false; });
   player.checkpoint = null;
@@ -720,7 +817,7 @@ window.__game.loadLevel = loadLevel; window.__game.player = player; window.__gam
 
 function startGame(level=1){
   initAudio();
-  G.deaths = 0; $('deaths').textContent = '0'; G.runStart = performance.now();
+  G.deaths = 0; lastWin = null; $('deaths').textContent = '0'; G.runStart = performance.now();
   $('startScreen').classList.add('hidden'); $('winScreen').classList.add('hidden'); $('charScreen').classList.add('hidden'); stamina = 1;
   $('hudL').classList.remove('hidden'); $('restartTop').classList.remove('hidden');
   loadLevel(level);
@@ -744,23 +841,26 @@ function stars(n){ return `<span class="bar"><i style="width:${n*20}%"></i></spa
 function showCharSelect(){
   G.state = 'menu';
   if (!previews) previews = makePreviews();
-  const c = $('cards'); c.innerHTML = '';
-  for (const k in CHARS){
-    const ch = CHARS[k], d = document.createElement('div'); d.className = 'card'; d.dataset.char = k;
-    d.innerHTML = `${previews[k] ? `<img src="${previews[k]}" alt="${ch.name}">` : ''}<h2>${ch.name}</h2>
-      <div class="row">速度${stars(ch.spd)}</div><div class="row">跳躍${stars(ch.jmp)}</div>
-      <div class="ab">${ch.ab}</div><span class="tag" style="background:${ch.tagC}">${ch.tag}</span>`;
-    d.addEventListener('click', () => { setCharacter(k); $('charScreen').classList.add('hidden'); startGame(1); });
-    c.appendChild(d);
-  }
+  renderCards(); $('msg').style.display = 'none';
   ['startScreen','winScreen'].forEach(id => $(id).classList.add('hidden'));
   $('hudL').classList.add('hidden'); $('restartTop').classList.add('hidden');
   $('charScreen').classList.remove('hidden');
 }
+function renderCards(){
+  const c = $('cards'); c.innerHTML = '';
+  for (const k in CHARS){
+    const ch = CHARS[k], d = document.createElement('div'); d.className = 'card'; d.dataset.char = k;
+    d.innerHTML = `${previews[k] ? `<img src="${previews[k]}" alt="${tr('names')[k]}">` : ''}<h2>${tr('names')[k]}</h2>
+      <div class="row">${tr('speed')}${stars(ch.spd)}</div><div class="row">${tr('jumpStat')}${stars(ch.jmp)}</div>
+      <div class="ab">${tr('ab')[k]}</div><span class="tag" style="background:${ch.tagC}">${tr('tag')[k]}</span>`;
+    d.addEventListener('click', () => { setCharacter(k); $('charScreen').classList.add('hidden'); startGame(1); });
+    c.appendChild(d);
+  }
+}
 window.__game.showCharSelect = showCharSelect;
 $('startBtn').addEventListener('click', () => { initAudio(); showCharSelect(); });
 $('againBtn').addEventListener('click', () => showCharSelect());
-$('restartTop').addEventListener('click', () => { if (confirm('確定要重新開始並重新選擇角色嗎？')) showCharSelect(); });
+$('restartTop').addEventListener('click', () => { if (confirm(tr('confirmRestart'))) showCharSelect(); });
 
 // ---------- physics ----------
 const GRAV = 28;
@@ -835,10 +935,10 @@ function updatePlayer(dt, t){
   if (landed && newGround.onLand) newGround.onLand();
   if (landed && newGround.tag === 'check' && player.checkpoint !== newGround){
     player.checkpoint = newGround; const b = solidBounds(newGround); player.spawn.set((b.minx+b.maxx)/2, b.top, (b.minz+b.maxz)/2);
-    sfx.check(); showMsg('🚩 檢查點！', 1200, '#5dff8f');
+    sfx.check(); showMsg(tr('checkpoint'), 1200, '#5dff8f');
   }
   if (player.grounded && newGround && newGround.tag === 'finish') completeLevel();
-  if (!player.dead && player.pos.y < deathY) eliminate('掉下去了！', 'fall', 0.9);
+  if (!player.dead && player.pos.y < deathY) eliminate(tr('fell'), 'fall', 0.9);
   // avatar
   const hs = Math.hypot(player.vel.x, player.vel.z);
   if (hs > 0.5){ const target = Math.atan2(player.vel.x, player.vel.z); let d = target - player.facing; d = Math.atan2(Math.sin(d), Math.cos(d)); player.facing += d * Math.min(1, dt*12); }
@@ -862,7 +962,7 @@ function frame(now){
     for (let i = shards.length-1; i >= 0; i--){ const s = shards[i]; s.v.y -= GRAV*0.6*dt; s.m.position.addScaledVector(s.v, dt); s.m.rotation.x += s.r.x*dt; s.m.rotation.y += s.r.y*dt; s.life -= dt; if (s.life <= 0){ s.m.parent && s.m.parent.remove(s.m); shards.splice(i,1); } }
     if (G.state === 'playing') $('time').textContent = ((performance.now() - G.runStart)/1000).toFixed(1);
   } else if (G.state === 'menu' && !levelGroup){
-    loadLevel(1); G.state = 'menu';
+    loadLevel(1); G.state = 'menu'; clearTimeout(showMsg.t); $('msg').style.display = 'none';
   } else if (G.state === 'menu'){
     menuT += dt; camYaw = Math.sin(menuT*0.2)*0.6; updateDynamics(dt, t);
   }
@@ -875,6 +975,8 @@ function frame(now){
 }
 requestAnimationFrame(frame);
 
+$('langBtn').addEventListener('click', () => setLang(LANG === 'en' ? 'zh' : 'en'));
+applyLang();
 // test hook: ?level=N starts directly at that level
 if (params.has('level')) setTimeout(() => startGame(Math.max(1, Math.min(5, +params.get('level') || 1))), 50);
 })();
