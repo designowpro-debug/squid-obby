@@ -1,4 +1,4 @@
-const { chromium } = require('playwright-core');
+const { chromium } = require('/usr/local/lib/pnpm/5/.pnpm/playwright-core@1.59.1/node_modules/playwright-core');
 const fs = require('fs');
 (async () => {
   const b = await chromium.launch({ executablePath:'/usr/bin/google-chrome', args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
@@ -15,8 +15,8 @@ const fs = require('fs');
   await p.evaluate(() => {
     ['hudL','restartTop','langBtn','msg','pop','touch'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
     const o = document.createElement('div');
-    o.style.cssText = 'position:fixed;left:0;top:0;bottom:0;width:560px;z-index:50;background:linear-gradient(90deg,rgba(40,8,30,.92),rgba(40,8,30,.75) 70%,rgba(40,8,30,0));color:#fff;font-family:system-ui,sans-serif;padding:60px 50px;box-sizing:border-box';
-    o.innerHTML = '<div style="font-size:54px;letter-spacing:16px">○△□</div><div style="font-size:84px;font-weight:900;line-height:1;margin:10px 0;text-shadow:0 6px 0 #000">SQUID<br>OBBY</div><div style="font-size:30px;font-weight:700;color:#ffd23f">3D Jump &amp; Run Fan Game</div><div style="font-size:22px;margin-top:22px;line-height:1.5">5 levels · 3 characters<br>Glass bridge · spinning bars<br>Play free in your browser · iPad ready</div><div style="display:inline-block;margin-top:26px;font-size:28px;font-weight:900;background:#1ec95a;border:4px solid #fff;border-radius:16px;padding:8px 26px">▶ PLAY NOW</div>';
+    o.style.cssText = 'position:fixed;left:0;top:0;bottom:0;width:600px;z-index:50;background:linear-gradient(90deg,rgba(50,20,120,.92),rgba(70,30,150,.72) 70%,rgba(70,30,150,0));color:#fff;font-family:system-ui,sans-serif;padding:40px 50px;box-sizing:border-box';
+    o.innerHTML = '<div style="font-size:54px">🍭☁️🍩</div><div style="font-size:72px;font-weight:900;line-height:1;margin:6px 0;text-shadow:0 6px 0 #2a1060">CANDY<br>CLOUD DASH</div><div style="font-size:30px;font-weight:700;color:#ffd23f">3D Jump &amp; Run Obstacle Course</div><div style="font-size:22px;margin-top:22px;line-height:1.5">5 sweet levels · 3 characters<br>Crystal paths · lollipop spinners<br>Play free in your browser · iPad ready</div><div style="display:inline-block;margin-top:20px;font-size:28px;font-weight:900;background:#1ec95a;border:4px solid #fff;border-radius:16px;padding:8px 26px">▶ PLAY NOW</div>';
     document.body.appendChild(o);
   });
   await p.waitForTimeout(300); await p.screenshot({path:'/workspace/squid-obby/og-image.png'}); await p.close();

@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#e8336d">
-<title>Squid Obby – 3D Jump & Run Fan Game</title>
-<meta name="description" content="Squid Obby: a free Roblox-style 3D obby fan game in your browser. 5 levels – hopscotch, glass bridge, dalgona jumps, marble spin and a final showdown. 3 characters, works on iPad and phones. English / 中文.">
+<meta name="theme-color" content="#7b5cff">
+<title>Candy Cloud Dash – 3D Jump & Run Obstacle Course</title>
+<meta name="description" content="Candy Cloud Dash: a free 3D jump & run obstacle course in the candy sky. 5 levels, 3 blocky characters, spinning lollipops, crystal sugar path. Play instantly on desktop, iPad or phone. English / 中文.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Squid Obby">
-<meta property="og:title" content="Squid Obby – 3D Jump & Run Fan Game">
-<meta property="og:description" content="Free browser obby: 5 levels, 3 blocky characters, glass bridge, spinning bars. Play instantly on desktop, iPad or phone.">
-<meta property="og:url" content="https://designowpro-debug.github.io/squid-obby/">
-<meta property="og:image" content="https://designowpro-debug.github.io/squid-obby/og-image.png">
+<meta property="og:site_name" content="Candy Cloud Dash">
+<meta property="og:title" content="Candy Cloud Dash – 3D Jump & Run Obstacle Course">
+<meta property="og:description" content="Free browser platformer: 5 sweet levels, 3 characters, spinning bars and a crystal sugar path. Play on desktop, iPad or phone.">
+<meta property="og:url" content="https://designowpro-debug.github.io/candy-cloud-dash/">
+<meta property="og:image" content="https://designowpro-debug.github.io/candy-cloud-dash/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Squid Obby – 3D Jump & Run Fan Game">
-<meta name="twitter:description" content="Free browser obby: 5 levels, 3 blocky characters, glass bridge, spinning bars. Play on desktop, iPad or phone.">
-<meta name="twitter:image" content="https://designowpro-debug.github.io/squid-obby/og-image.png">
+<meta name="twitter:title" content="Candy Cloud Dash – 3D Jump & Run Obstacle Course">
+<meta name="twitter:description" content="Free browser platformer: 5 sweet levels, 3 characters, spinning bars and a crystal sugar path.">
+<meta name="twitter:image" content="https://designowpro-debug.github.io/candy-cloud-dash/og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -43,7 +43,7 @@
   #msg small{display:block;font-size:22px;letter-spacing:1px}
   #flash{position:fixed;inset:0;background:#f00;opacity:0;pointer-events:none;z-index:4;transition:opacity .4s}
   .screen{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    background:radial-gradient(circle at 50% 30%,rgba(232,51,109,.92),rgba(40,10,30,.96));color:#fff;text-align:center;padding:20px;box-sizing:border-box}
+    background:radial-gradient(circle at 50% 25%,rgba(150,110,255,.94),rgba(40,26,110,.96) 55%,rgba(14,10,40,.98));color:#fff;text-align:center;padding:20px;box-sizing:border-box}
   .screen h1{font-size:min(11vw,64px);margin:0 0 6px;text-shadow:0 5px 0 #000;letter-spacing:3px}
   .screen .shapes{font-size:min(10vw,54px);letter-spacing:18px;margin-bottom:6px}
   .screen p{margin:4px 0;font-size:17px;max-width:620px;line-height:1.55}
@@ -90,6 +90,29 @@
     padding:8px 12px;border-radius:12px;border:2px solid #fff;background:rgba(0,0,0,.45);color:#fff;font-family:inherit;font-weight:700;touch-action:manipulation;cursor:pointer}
   .disc{font-size:12px!important;opacity:.75;margin-top:14px!important}
   .screen .sub{font-size:20px;font-weight:700;margin:0 0 10px;letter-spacing:2px}
+  .btnrow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .btn.alt{background:#ff7ac6;box-shadow:0 6px 0 #a83b7c}
+  .btn.small{font-size:18px;padding:8px 18px;margin-top:8px;box-shadow:0 4px 0 #0a6b2c}
+  .btn.soon,.btn.owned{background:#777;box-shadow:0 4px 0 #444;cursor:default}
+  #shopScreen{justify-content:flex-start;overflow-y:auto;padding-top:calc(60px + env(safe-area-inset-top));padding-bottom:40px}
+  #shopScreen h1{font-size:min(9vw,44px)}
+  .packs{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:8px;max-width:1100px}
+  .pack{width:min(42vw,230px);background:rgba(0,0,0,.4);border:3px solid #fff;border-radius:18px;padding:10px;box-sizing:border-box;pointer-events:auto}
+  .pack.sup{border-color:#ffd23f;box-shadow:0 0 18px rgba(255,210,63,.6)}
+  .pimgs{display:flex;justify-content:center;background:linear-gradient(#a8e6ff,#ffd6f2);border-radius:12px}
+  .pimgs img{width:50%;max-width:110px}
+  .pack h3{margin:6px 0 2px;font-size:20px}.pdesc{font-size:13px;line-height:1.35;min-height:36px}.price{font-size:18px;font-weight:900;color:#ffd23f;margin-top:4px}
+  .sh2{margin:18px 0 6px;font-size:22px}
+  .skinsRow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:1100px}
+  .skin{width:96px;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.6);border-radius:12px;padding:4px;cursor:pointer;pointer-events:auto}
+  .skin img{width:100%;background:linear-gradient(#a8e6ff,#ffd6f2);border-radius:8px}
+  .skin.on{border-color:#5dff8f;box-shadow:0 0 10px #5dff8f}.skin.lockedSkin{opacity:.5;cursor:default}
+  .sname{font-size:13px;font-weight:700}.sbtn{font-size:12px}
+  .redeem{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;align-items:center}
+  #licInput{pointer-events:auto;width:min(80vw,420px);font-size:16px;padding:10px 12px;border-radius:10px;border:2px solid #fff;font-family:monospace;touch-action:manipulation;user-select:text;-webkit-user-select:text}
+  #licStatus{min-height:22px;margin-top:6px;font-weight:700}
+  .help{font-size:13px!important;opacity:.85}
+  #supBadge{color:#ffd23f}
   #restartTop{position:fixed;z-index:7;top:calc(54px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));font-size:15px;
     padding:8px 12px;border-radius:12px;border:2px solid #fff;background:rgba(0,0,0,.4);color:#fff;font-family:inherit;font-weight:700;touch-action:manipulation}
 </style>
@@ -97,7 +120,7 @@
 <body>
 <div id="app"></div>
 <div id="flash"></div>
-<div id="hudL" class="hud hidden"><div class="lv" id="lvName">Level 1</div><div id="hpWrap"><span data-i18n="hp">❤️ HP</span> <span id="hpNum">100</span><div id="hp"><i id="hpFill"></i></div></div><div><span data-i18n="deaths"></span><span id="deaths">0</span></div><div><span data-i18n="time"></span><span id="time">0.0</span><span data-i18n="sec"></span></div><div><span data-i18n="char"></span><span id="charName"></span></div><div id="stamWrap" class="hidden"><span data-i18n="stamina"></span><div id="stam"><i id="stamFill"></i></div></div></div>
+<div id="hudL" class="hud hidden"><div class="lv" id="lvName">Level 1</div><div id="hpWrap"><span data-i18n="hp">❤️ HP</span> <span id="hpNum">100</span><div id="hp"><i id="hpFill"></i></div></div><div><span data-i18n="deaths"></span><span id="deaths">0</span></div><div><span data-i18n="time"></span><span id="time">0.0</span><span data-i18n="sec"></span></div><div><span data-i18n="char"></span><span id="charName"></span></div><div id="supBadge" class="hidden" data-i18n="supporter"></div><div id="stamWrap" class="hidden"><span data-i18n="stamina"></span><div id="stam"><i id="stamFill"></i></div></div></div>
 <div id="msg" class="hud"></div>
 <div id="pop" class="hud"></div>
 <button id="langBtn">🌐 中文</button>
@@ -105,13 +128,13 @@
 <div id="touch"><div id="joy"><div id="knob"></div></div><div id="camHint" data-i18n="camHint"></div><div id="jumpBtn" data-i18n="jump"></div><div id="dashBtn" class="hidden" data-i18n="dash"></div></div>
 
 <div id="startScreen" class="screen">
-  <div class="shapes">○△□</div>
+  <div class="shapes">🍭☁️🍩</div>
   <h1 data-i18n="title"></h1>
   <div class="sub" data-i18n="subtitle"></div>
   <p data-i18n-html="startDesc"></p>
   <p data-i18n="ctrlPC"></p>
   <p data-i18n="ctrlTouch"></p>
-  <button class="btn" id="startBtn" data-i18n="start"></button>
+  <div class="btnrow"><button class="btn" id="startBtn" data-i18n="start"></button><button class="btn alt shopOnly" id="shopBtn" data-i18n="shop"></button></div>
   <p class="disc" data-i18n="disclaimer"></p>
 </div>
 <div id="charScreen" class="screen hidden">
@@ -119,12 +142,23 @@
   <p data-i18n="chooseSub"></p>
   <div class="cards" id="cards"></div>
 </div>
+<div id="shopScreen" class="screen hidden">
+  <h1 data-i18n="shopTitle"></h1>
+  <p data-i18n="shopSub"></p>
+  <div class="packs" id="packs"></div>
+  <h2 class="sh2" data-i18n="mySkins"></h2>
+  <div class="skinsRow" id="skinsRow"></div>
+  <div class="redeem"><input id="licInput" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn small" id="licBtn" data-i18n="unlock"></button></div>
+  <div id="licStatus"></div>
+  <p class="help" data-i18n="licHelp"></p>
+  <button class="btn small" id="shopBack" data-i18n="back"></button>
+</div>
 <div id="winScreen" class="screen hidden">
-  <div class="shapes">🏆</div>
+  <div class="shapes">🎂🏆</div>
   <h1 data-i18n="winTitle"></h1>
   <p style="font-size:24px"><span data-i18n="totalTime"></span><b id="winTime">0</b></p>
   <p style="font-size:24px"><span data-i18n="deathsW"></span><b id="winDeaths">0</b></p>
-  <button class="btn" id="againBtn" data-i18n="again"></button>
+  <div class="btnrow"><button class="btn" id="againBtn" data-i18n="again"></button><button class="btn alt" id="shareBtn" data-i18n="share"></button><button class="btn alt shopOnly" id="shopBtnWin" data-i18n="shop"></button></div>
   <p class="disc" data-i18n="disclaimer"></p>
 </div>
 
@@ -134,59 +168,104 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// =====================================================================
+//  CONFIG – edit this block only. See SETUP-LEMONSQUEEZY.md
+// =====================================================================
+const CONFIG = {
+  gameUrl: 'https://designowpro-debug.github.io/candy-cloud-dash/',
+  // Hosts where the shop is shown. Anywhere else (or inside an iframe) = portal mode (no shop, no payment links).
+  shopHosts: ['designowpro-debug.github.io', 'localhost', '127.0.0.1'],
+  lemonSqueezy: {
+    storeId: null,              // TODO: your numeric Lemon Squeezy Store ID (Settings → Stores), e.g. 12345
+    packs: {
+      // TODO: paste each product's checkout link (Share → "Checkout URL") and its product/variant IDs
+      neon:      { price: 'US$1.99', checkoutUrl: 'TODO_NEON_CHECKOUT_URL',      productIds: [], variantIds: [] },
+      candy:     { price: 'US$1.99', checkoutUrl: 'TODO_CANDY_CHECKOUT_URL',     productIds: [], variantIds: [] },
+      galaxy:    { price: 'US$1.99', checkoutUrl: 'TODO_GALAXY_CHECKOUT_URL',    productIds: [], variantIds: [] },
+      supporter: { price: 'US$4.99', checkoutUrl: 'TODO_SUPPORTER_CHECKOUT_URL', productIds: [], variantIds: [] }
+    }
+  }
+};
+// =====================================================================
+const PORTAL = (() => {
+  const q = params.get('portal'); if (q === '1') return true; if (q === '0') return false;
+  let framed = false; try { framed = window.self !== window.top; } catch(e){ framed = true; }
+  return framed || !CONFIG.shopHosts.includes(location.hostname);
+})();
 // ---------- i18n (default English) ----------
 const I18N = {
   en: {
-    docTitle: 'Squid Obby – 3D Jump & Run Fan Game',
-    title: 'SQUID OBBY', subtitle: '3D Jump & Run Challenge',
-    startDesc: 'Five obby levels: <b>Hopscotch Stones</b> → <b>Glass Bridge</b> → <b>Dalgona Jumps</b> → <b>Marble Spin</b> → <b>Final Showdown</b>. Reach the goal alive! Fall and you return to the last checkpoint 🚩',
+    docTitle: 'Candy Cloud Dash – 3D Jump & Run Obstacle Course',
+    title: 'CANDY CLOUD DASH', subtitle: '3D Jump & Run in the Candy Sky',
+    startDesc: 'Five sweet levels: <b>Gumdrop Hop</b> → <b>Crystal Sugar Path</b> → <b>Lollipop Spin</b> → <b>Donut Whirl</b> → <b>Cake Summit</b>. Reach the goal! Fall and you return to the last checkpoint 🚩',
     ctrlPC: '⌨️ Computer: WASD / arrow keys to move, Space to jump (Bacon Hair can double jump), Shift to sprint (Crispy Kara), drag the mouse to look around',
     ctrlTouch: '📱 Tablet / phone: joystick bottom-left, “Jump” button bottom-right, “Dash” button (Crispy Kara), drag the screen to look around',
-    disclaimer: 'Unofficial fan-made game. Not affiliated with Netflix or Roblox.',
-    start: 'Play', chooseChar: 'Choose Your Character', chooseSub: 'Tap a character to start (5 levels)',
+    disclaimer: 'An independent original game. Not affiliated with or endorsed by any other game, brand or platform.',
+    start: 'Play', shop: '🛍 Skin Shop', chooseChar: 'Choose Your Character', chooseSub: 'Tap a character to start (5 levels)',
     winTitle: 'You Win!', totalTime: 'Total time: ', deathsW: 'Deaths: ', again: 'Play Again (choose character)',
+    share: '📤 Share', shareText: (tm) => `I cleared Candy Cloud Dash in ${tm}! Can you beat my time?`, copied: '🔗 Link copied!',
     restart: '↻ Restart', camHint: 'Drag screen to look', jump: 'Jump', dash: 'Dash',
-    hp: '❤️ HP', deaths: '💀 Deaths: ', time: '⏱ Time: ', sec: ' s', char: '🧍 Character: ', stamina: '⚡ Stamina',
+    hp: '❤️ HP', deaths: '💀 Deaths: ', time: '⏱ Time: ', sec: ' s', char: '🧍 Character: ', stamina: '⚡ Stamina', supporter: '⭐ Supporter',
     backToCheck: 'Back to the last checkpoint', lvClear: n => `Level ${n} Clear!`, nextLv: 'Get ready for the next level…',
     winMsg: '🏆 You Win!', timeFmt: (m, s) => `${m}m ${s}s`, fell: 'You Fell!', hpZero: 'Out of HP!', checkpoint: '🚩 Checkpoint!',
-    confirmRestart: 'Restart from Level 1 and choose a character again?', speed: 'Speed', jumpStat: 'Jump', goal: 'GOAL', prize: '₩45.6B',
-    lv: ['', 'Level 1: Hopscotch Stones', 'Level 2: Glass Bridge', 'Level 3: Dalgona Jumps', 'Level 4: Marble Spin', 'Level 5: Final Showdown'],
-    tip: ['', 'Hop across the squares and stones. Fall in the water and you go back to a checkpoint.',
-      'Two glass panels per row — only one is tempered glass!',
+    confirmRestart: 'Restart from Level 1 and choose a character again?', speed: 'Speed', jumpStat: 'Jump', goal: 'GOAL',
+    lv: ['', 'Level 1: Gumdrop Hop', 'Level 2: Crystal Sugar Path', 'Level 3: Lollipop Spin', 'Level 4: Donut Whirl', 'Level 5: Cake Summit'],
+    tip: ['', 'Hop across the candy squares and gumdrops. Fall in the soda sea and you go back to a checkpoint.',
+      'Two crystal panels per row — one is fake sugar and shatters!',
       'Spinning bars cost HP. Grab ❤️ hearts to heal!',
-      'Spinning marble discs and a bar walkway. Watch your HP!',
-      'Final level! The spinning cross bar hurts. Survive to the end!'],
+      'Spinning donut discs and a bar walkway. Watch your HP!',
+      'Final level! The spinning cross bar hurts. Climb to the cake!'],
     names: {noob:'Noob', bacon:'Bacon Hair', kara:'Crispy Kara'},
     ab: {noob:'No ability: walks extra slowly and jumps low', bacon:'Jump master: jumps higher and can DOUBLE JUMP in the air', kara:'Sprint: runs fast; hold Shift / “Dash” to sprint (uses stamina)'},
     tag: {noob:'Hard mode', bacon:'Normal', kara:'Easy'},
+    shopTitle: '🛍 Skin Shop', shopSub: 'Cosmetic outfits for every character. They look cool but give no gameplay advantage. Every purchase supports development 💜',
+    buy: 'Buy', soon: 'Coming soon', owned: '✓ Owned', equip: 'Equip', equipped: '✓ Equipped', locked: '🔒',
+    mySkins: 'My Skins', back: '← Back', unlock: 'Unlock', licPh: 'Paste your license key from the receipt email',
+    licHelp: 'After buying, you get a license key by email. Paste it here to unlock on this device.',
+    checking: 'Checking key…', licOk: (p) => `Unlocked: ${p} 🎉`, licBad: 'That key is not valid.', licNet: 'Could not reach the license server. Check your internet and try again.',
+    licLimit: 'This key has reached its device limit.', licWrong: 'This key is not for Candy Cloud Dash.', licInactive: 'This key is disabled or expired.', licDup: 'This key is already unlocked on this device.',
+    packs: {neon:'Neon Pack', candy:'Candy Pack', galaxy:'Galaxy Pack', supporter:'Supporter Pack'},
+    packDesc: {neon:'Glowing neon outfits: Neon Glow + Cyber Lime', candy:'Sweet outfits: Bubblegum + Mint Choco', galaxy:'Space outfits: Starlight + Comet',
+      supporter:'ALL packs + exclusive Golden Hero skin with crown + ⭐ Supporter badge'},
+    skins: {classic:'Classic', neonGlow:'Neon Glow', cyberLime:'Cyber Lime', bubblegum:'Bubblegum', mintChoco:'Mint Choco', starlight:'Starlight', comet:'Comet', goldenHero:'Golden Hero'},
     lang: '中文'
   },
   zh: {
-    docTitle: '魷魚闖關 Squid Obby – 3D 跳躍闖關（粉絲自製）',
-    title: '魷魚闖關', subtitle: 'Squid Obby 3D 跳躍挑戰',
-    startDesc: '五道跳躍關卡：<b>跳格子踏石</b> → <b>玻璃橋</b> → <b>椪糖跳台</b> → <b>彈珠迴旋</b> → <b>最終決戰</b>，活著抵達終點！掉下去會回到檢查點 🚩',
+    docTitle: '糖果雲衝衝 Candy Cloud Dash – 3D 跳躍闖關',
+    title: '糖果雲衝衝', subtitle: 'Candy Cloud Dash 天空糖果闖關',
+    startDesc: '五道甜甜關卡：<b>軟糖跳跳</b> → <b>冰糖水晶路</b> → <b>棒棒糖轉轉</b> → <b>甜甜圈漩渦</b> → <b>蛋糕之巔</b>，抵達終點！掉下去會回到檢查點 🚩',
     ctrlPC: '⌨️ 電腦：WASD／方向鍵移動、空白鍵跳躍（培根頭可二段跳）、Shift 衝刺（小咔啦）、滑鼠拖曳轉動視角',
     ctrlTouch: '📱 平板／手機：左下搖桿移動、右下「跳」按鈕、「衝」按鈕（小咔啦）、拖曳畫面轉動視角',
-    disclaimer: '非官方粉絲自製遊戲，與 Netflix 或 Roblox 無關。',
-    start: '開始遊戲', chooseChar: '選擇角色', chooseSub: '點選一位角色開始挑戰（五道關卡）',
+    disclaimer: '獨立原創遊戲，與任何其他遊戲、品牌或平台無關。',
+    start: '開始遊戲', shop: '🛍 造型商店', chooseChar: '選擇角色', chooseSub: '點選一位角色開始挑戰（五道關卡）',
     winTitle: '恭喜通關！', totalTime: '總時間：', deathsW: '淘汰次數：', again: '再玩一次（重選角色）',
+    share: '📤 分享', shareText: (tm) => `我用 ${tm} 通關了「糖果雲衝衝」！你能比我快嗎？`, copied: '🔗 已複製連結！',
     restart: '↻ 重新開始', camHint: '拖曳畫面轉視角', jump: '跳', dash: '衝',
-    hp: '❤️ 生命', deaths: '💀 淘汰次數：', time: '⏱ 總時間：', sec: ' 秒', char: '🧍 角色：', stamina: '⚡ 體力',
+    hp: '❤️ 生命', deaths: '💀 淘汰次數：', time: '⏱ 總時間：', sec: ' 秒', char: '🧍 角色：', stamina: '⚡ 體力', supporter: '⭐ 贊助者',
     backToCheck: '回到檢查點重新挑戰', lvClear: n => `第 ${n} 關 過關！`, nextLv: '準備進入下一關…',
     winMsg: '🏆 通關！', timeFmt: (m, s) => `${m} 分 ${s} 秒`, fell: '掉下去了！', hpZero: '生命歸零！', checkpoint: '🚩 檢查點！',
-    confirmRestart: '確定要重新開始並重新選擇角色嗎？', speed: '速度', jumpStat: '跳躍', goal: '終點', prize: '₩456億',
-    lv: ['', '第 1 關：跳格子踏石', '第 2 關：玻璃橋', '第 3 關：椪糖跳台', '第 4 關：彈珠迴旋', '第 5 關：最終決戰'],
-    tip: ['', '跳過格子與踏石，掉進水裡會回到檢查點', '每排兩片玻璃，只有一片是強化玻璃！', '被旋轉橫桿打到會扣血，吃 ❤️ 補血！', '旋轉彈珠盤＋橫桿走道，小心扣血！', '最終關！十字旋轉桿會扣血，撐到最後！'],
+    confirmRestart: '確定要重新開始並重新選擇角色嗎？', speed: '速度', jumpStat: '跳躍', goal: '終點',
+    lv: ['', '第 1 關：軟糖跳跳', '第 2 關：冰糖水晶路', '第 3 關：棒棒糖轉轉', '第 4 關：甜甜圈漩渦', '第 5 關：蛋糕之巔'],
+    tip: ['', '跳過糖果格子與軟糖，掉進汽水海會回到檢查點', '每排兩片水晶，其中一片是假的糖片會碎掉！', '被旋轉橫桿打到會扣血，吃 ❤️ 補血！', '旋轉甜甜圈盤＋橫桿走道，小心扣血！', '最終關！十字旋轉桿會扣血，爬上蛋糕吧！'],
     names: {noob:'菜鳥', bacon:'培根頭', kara:'小咔啦'},
     ab: {noob:'無特殊能力：走得特別慢、跳得低', bacon:'跳躍高手：跳得更高，空中可「二段跳」', kara:'衝刺：跑得快，按住 Shift／「衝」加速衝刺（消耗體力）'},
     tag: {noob:'困難模式', bacon:'普通', kara:'簡單'},
+    shopTitle: '🛍 造型商店', shopSub: '所有角色都能穿的外觀造型（純外觀，不影響遊戲平衡）。每一筆購買都是對開發的支持 💜',
+    buy: '購買', soon: '即將推出', owned: '✓ 已擁有', equip: '穿上', equipped: '✓ 穿著中', locked: '🔒',
+    mySkins: '我的造型', back: '← 返回', unlock: '解鎖', licPh: '貼上收據 Email 裡的授權碼（License Key）',
+    licHelp: '購買後會收到含授權碼的 Email，貼到這裡即可在這台裝置解鎖。',
+    checking: '驗證中…', licOk: (p) => `已解鎖：${p} 🎉`, licBad: '授權碼無效。', licNet: '無法連線到授權伺服器，請檢查網路後再試。',
+    licLimit: '這組授權碼已達裝置數上限。', licWrong: '這組授權碼不是本遊戲的。', licInactive: '這組授權碼已停用或過期。', licDup: '這組授權碼已在這台裝置解鎖過。',
+    packs: {neon:'霓虹包', candy:'糖果包', galaxy:'銀河包', supporter:'贊助者包'},
+    packDesc: {neon:'發光霓虹造型：霓虹光 + 電光綠', candy:'甜甜造型：泡泡糖 + 薄荷巧克力', galaxy:'太空造型：星光 + 彗星', supporter:'全部造型包 + 限定「黃金英雄」皇冠造型 + ⭐ 贊助者徽章'},
+    skins: {classic:'經典', neonGlow:'霓虹光', cyberLime:'電光綠', bubblegum:'泡泡糖', mintChoco:'薄荷巧克力', starlight:'星光', comet:'彗星', goldenHero:'黃金英雄'},
     lang: 'EN'
   }
 };
 let LANG = (() => {
   const q = (params.get('lang') || '').toLowerCase();
   if (q.startsWith('zh')) return 'zh'; if (q.startsWith('en')) return 'en';
-  try { const s = localStorage.getItem('squidObbyLang'); if (s === 'zh' || s === 'en') return s; } catch(e){}
+  try { const s = localStorage.getItem('ccd.lang'); if (s === 'zh' || s === 'en') return s; } catch(e){}
   return 'en';
 })();
 const tr = (k, ...a) => { const v = I18N[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
@@ -204,9 +283,11 @@ function applyLang(){
   if (typeof CH !== 'undefined' && CH) $('charName').textContent = tr('names')[charKey];
   for (const s of signs){ if (s.material.map) s.material.map.dispose(); s.material.map = signTexture(s.key, s.fg, s.bg, s.w, s.h, s.font); s.material.needsUpdate = true; }
   if (!$('charScreen').classList.contains('hidden')) renderCards();
+  $('licInput').placeholder = tr('licPh');
+  if (!$('shopScreen').classList.contains('hidden')) renderShop();
   if (lastWin) $('winTime').textContent = tr('timeFmt', lastWin[0], lastWin[1]);
 }
-function setLang(l){ LANG = l; try { localStorage.setItem('squidObbyLang', l); } catch(e){} applyLang(); }
+function setLang(l){ LANG = l; try { localStorage.setItem('ccd.lang', l); } catch(e){} applyLang(); }
 
 const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || params.has('touch');
 
@@ -267,25 +348,20 @@ function textTexture(text, fg='#fff', bg=null, w=128, h=64, font='bold 44px sans
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 
-// blocky Roblox-style avatar, front faces +z
+// blocky avatar, front faces +z
 function makeAvatar(opt={}){
   const suit = opt.suit ?? 0x2e7d5b, skin = opt.skin ?? 0xffd23f, pants = opt.pants ?? suit, arms = opt.arms ?? suit, shoes = opt.shoes ?? 0xffffff;
   const g = new THREE.Group();
   const body = new THREE.Group(); g.add(body);
   const torso = box(1.0,1.1,0.55,suit,0,1.55,0,body);
-  if (opt.stripes !== false){ box(0.12,1.1,0.57,0xffffff,0.36,1.55,0,body); box(0.12,1.1,0.57,0xffffff,-0.36,1.55,0,body); }
   const head = box(0.8,0.8,0.8,skin,0,2.5,0,body);
-  if (opt.mask){
-    box(0.84,0.84,0.84,0x111111,0,2.5,0,body);
-    const sym = new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.5), new THREE.MeshBasicMaterial({map:textTexture(opt.mask,'#fff',null,64,64,'bold 50px sans-serif'),transparent:true}));
-    sym.position.set(0,2.5,0.43); body.add(sym);
-  } else {
+  {
     box(0.12,0.16,0.04,0x111111,-0.17,2.58,0.41,body);
     box(0.12,0.16,0.04,0x111111,0.17,2.58,0.41,body);
     box(0.34,0.06,0.04,0x111111,0,2.33,0.41,body);
   }
   if (opt.hair) box(0.86,0.25,0.86,opt.hair,0,2.95,-0.02,body);
-  if (opt.bacon){ // Roblox "bacon hair": wavy strips
+  if (opt.bacon){ // "bacon hair": wavy strips
     box(0.9,0.22,0.9,0x7a3b1f,0,2.98,0,body);
     for (let i=-3;i<=3;i++){ const st = box(0.13,0.55,0.92,i%2?0xb5653a:0x7a3b1f,i*0.13,2.78,-0.02,body); st.rotation.z = (i%2?0.12:-0.12); }
     box(0.9,0.75,0.14,0x7a3b1f,0,2.55,-0.43,body);
@@ -297,12 +373,15 @@ function makeAvatar(opt={}){
   box(0.45,0.25,0.5,skin,0,-0.9,0,armL); box(0.45,0.25,0.5,skin,0,-0.9,0,armR);
   const legL = mkLimb(-0.26,1.0,pants), legR = mkLimb(0.26,1.0,pants);
   box(0.5,0.18,0.56,shoes,0,-0.92,0.04,legL); box(0.5,0.18,0.56,shoes,0,-0.92,0.04,legR);
-  if (opt.num){
-    const tag = new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.4), new THREE.MeshBasicMaterial({map:textTexture(opt.num,'#fff',null),transparent:true}));
-    tag.position.set(0,1.7,-0.29); tag.rotation.y = Math.PI; body.add(tag);
-    const tag2 = new THREE.Mesh(new THREE.PlaneGeometry(0.4,0.2), new THREE.MeshBasicMaterial({map:textTexture(opt.num,'#222','#fff'),transparent:false}));
-    tag2.position.set(-0.22,1.85,0.285); body.add(tag2);
-  }
+  if (opt.glow){ const gm = new THREE.MeshBasicMaterial({color:opt.glow});
+    box(0.06,1.1,0.58,0,0.47,1.55,0,body,gm); box(0.06,1.1,0.58,0,-0.47,1.55,0,body,gm); box(1.02,0.08,0.58,0,0,1.05,0,body,gm);
+    [legL, legR].forEach(l => box(0.52,0.06,0.58,0,0,-0.8,0.02,l,gm)); }
+  if (opt.emblem){ const em = new THREE.MeshBasicMaterial({map:textTexture(opt.emblem, opt.emblemC || '#fff', null, 64, 64, 'bold 50px sans-serif'), transparent:true});
+    const e1 = new THREE.Mesh(new THREE.PlaneGeometry(0.45,0.45), em); e1.position.set(0,1.62,0.29); body.add(e1);
+    const e2 = new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.6), em); e2.position.set(0,1.6,-0.29); e2.rotation.y = Math.PI; body.add(e2); }
+  if (opt.crown){ const top = opt.cap ? 3.2 : opt.bacon ? 3.14 : 2.98; box(0.84,0.18,0.84,0xffc400,0,top,0,body);
+    [[-0.32,-0.32],[0.32,-0.32],[-0.32,0.32],[0.32,0.32],[0,0.36]].forEach(([x,z]) => box(0.16,0.3,0.16,0xffd84a,x,top+0.22,z,body));
+    box(0.14,0.14,0.05,0xff3b8d,0,top+0.04,0.43,body); }
   g.userData = {body, armL, armR, legL, legR, phase: Math.random()*10};
   return g;
 }
@@ -415,15 +494,38 @@ let levelUpdate = null, onRespawn = null;
 const player = { pos:new THREE.Vector3(), vel:new THREE.Vector3(), grounded:false, ground:null, dead:false, deadT:0, spawn:new THREE.Vector3(), facing:Math.PI, coyote:0, knock:0, checkpoint:null, hp:100, invuln:0, stagger:0 };
 const CHARS = {
   noob:  {name:'菜鳥',  move:6.0, jump:9.2,  dbl:false, sprint:0,
-          look:{suit:0x2a6fdb, arms:0xffd23f, skin:0xffd23f, pants:0x5fb83a, shoes:0x5fb83a, stripes:false, num:'001'},
+          look:{suit:0x2a6fdb, arms:0xffd23f, skin:0xffd23f, pants:0x5fb83a, shoes:0x5fb83a},
           spd:1, jmp:1, tagC:'#e8202a'},
   bacon: {name:'培根頭', move:8.0, jump:12.0, dbl:true, sprint:0,
-          look:{suit:0x16a8a0, skin:0xf5c99b, num:'456', bacon:true},
+          look:{suit:0x7b5cff, arms:0x7b5cff, skin:0xf5c99b, pants:0x2b2d42, shoes:0xffffff, bacon:true},
           spd:3, jmp:5, tagC:'#1ec95a'},
   kara:  {name:'小咔啦', move:9.0, jump:10.5, dbl:false, sprint:1.6,
-          look:{suit:0xe8a33d, arms:0xe8a33d, skin:0xffe0bd, pants:0xc0392b, cap:0xd62828, num:'218'},
+          look:{suit:0xe8a33d, arms:0xe8a33d, skin:0xffe0bd, pants:0xc0392b, shoes:0xffffff, cap:0xd62828},
           spd:5, jmp:3, tagC:'#3bd0ff'}
 };
+// ---------- cosmetic skins & unlock storage ----------
+const SKINS = {
+  classic:    {pack:null,       look:{}},
+  neonGlow:   {pack:'neon',     look:{suit:0x14142b, arms:0x14142b, pants:0x14142b, shoes:0x00f0ff, glow:0x00f0ff, emblem:'⚡', emblemC:'#00f0ff'}},
+  cyberLime:  {pack:'neon',     look:{suit:0x1c1c1c, arms:0xb6ff3b, pants:0x1c1c1c, shoes:0xb6ff3b, glow:0xb6ff3b, emblem:'◆', emblemC:'#b6ff3b'}},
+  bubblegum:  {pack:'candy',    look:{suit:0xff8ad8, arms:0xff8ad8, pants:0xffd1f0, shoes:0xffffff, emblem:'♥', emblemC:'#ffffff'}},
+  mintChoco:  {pack:'candy',    look:{suit:0x7ff0c8, arms:0x7ff0c8, pants:0x5a3a28, shoes:0x5a3a28, emblem:'●', emblemC:'#5a3a28'}},
+  starlight:  {pack:'galaxy',   look:{suit:0x1d2b8f, arms:0x1d2b8f, pants:0x10164d, shoes:0xffe66d, emblem:'★', emblemC:'#ffe66d'}},
+  comet:      {pack:'galaxy',   look:{suit:0xf4f4f8, arms:0xff7a2f, pants:0x2b2d42, shoes:0xff7a2f, emblem:'✦', emblemC:'#ff7a2f'}},
+  goldenHero: {pack:'supporter',look:{suit:0xffc83d, arms:0xffc83d, pants:0xb8860b, shoes:0xffffff, crown:true, glow:0xfff2a8, emblem:'★', emblemC:'#ffffff'}}
+};
+const PACKS = { neon:{skins:['neonGlow','cyberLime']}, candy:{skins:['bubblegum','mintChoco']}, galaxy:{skins:['starlight','comet']},
+                supporter:{skins:['goldenHero'], includes:['neon','candy','galaxy']} };
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('ccd.' + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('ccd.' + k, JSON.stringify(v)); } catch(e){} }
+};
+let unlockedPacks = new Set(store.get('unlocked', []));
+let equippedSkin = store.get('skin', 'classic');
+const skinUnlocked = k => SKINS[k] && (!SKINS[k].pack || unlockedPacks.has(SKINS[k].pack));
+if (!skinUnlocked(equippedSkin)) equippedSkin = 'classic';
+const isSupporter = () => unlockedPacks.has('supporter');
+function currentLook(k){ return Object.assign({}, CHARS[k || charKey].look, PORTAL ? {} : SKINS[equippedSkin].look); }
 let charKey = CHARS[params.get('char')] ? params.get('char') : 'bacon';
 let CH = CHARS[charKey];
 let playerAvatar = null;
@@ -431,7 +533,7 @@ let stamina = 1, sprintHeld = false;
 function setCharacter(k){
   charKey = k; CH = CHARS[k];
   if (playerAvatar) scene.remove(playerAvatar);
-  playerAvatar = makeAvatar(CH.look); scene.add(playerAvatar);
+  playerAvatar = makeAvatar(currentLook(k)); scene.add(playerAvatar);
   playerAvatar.traverse(o => { if (o.isMesh) o.castShadow = true; });
   $('charName').textContent = tr('names')[k];
   $('stamWrap').classList.toggle('hidden', !CH.sprint);
@@ -529,24 +631,70 @@ function addSweeper(L, x, top, z, len, w, color=0xe8202a, a0=null){
 function addFinish(L, x, top, z){
   // goal arch + trophy
   box(0.6, 5, 0.6, 0xffffff, x - 3.2, top + 2.5, z + 2, L); box(0.6, 5, 0.6, 0xffffff, x + 3.2, top + 2.5, z + 2, L);
-  const ban = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.4), addSign(new THREE.MeshBasicMaterial({side:THREE.DoubleSide}), 'goal', '#fff', '#e8336d', 256, 52, 'bold 36px sans-serif'));
+  const ban = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.4), addSign(new THREE.MeshBasicMaterial({side:THREE.DoubleSide}), 'goal', '#fff', '#7b5cff', 256, 52, 'bold 36px sans-serif'));
   ban.position.set(x, top + 4.6, z + 2); L.add(ban);
   box(1.6,0.4,1.6,0xc9a227,x,top+0.2,z-2,L); box(0.5,1.0,0.5,0xffd23f,x,top+0.9,z-2,L); box(1.6,1.4,1.6,0xffd23f,x,top+2.0,z-2,L);
   box(0.3,0.8,0.3,0xffd23f,x-1,top+2.1,z-2,L); box(0.3,0.8,0.3,0xffd23f,x+1,top+2.1,z-2,L);
 }
 
-// ======================= LEVEL 1: 跳格子踏石 =======================
+// ---------- candy-sky decor ----------
+function addClouds(L, cx, y, cz){
+  const cm = new THREE.MeshLambertMaterial({color:0xffffff, emissive:0xb8b0d8});
+  for (let i=0;i<10;i++){ const g = new THREE.Group(); g.position.set(cx + (i%2 ? 1 : -1)*(18 + Math.random()*16), y + Math.random()*8, cz + 50 - i*12); L.add(g);
+    for (let k=0;k<4;k++){ const b = box(3 + Math.random()*3, 1.6 + Math.random(), 2.6, 0, k*2.2 - 3, Math.random()*0.8, Math.random(), g, cm); b.castShadow = false; } }
+}
+function addStars(L){
+  const n = 400, pos = new Float32Array(n*3);
+  for (let i=0;i<n;i++){ pos[i*3] = (Math.random()-0.5)*300; pos[i*3+1] = 10 + Math.random()*80; pos[i*3+2] = -50 + (Math.random()-0.5)*300; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  L.add(new THREE.Points(g, new THREE.PointsMaterial({color:0xfff6c8, size:0.9, fog:false})));
+}
+function candyCane(L, x, z){
+  for (let k=0;k<10;k++) box(0.8, 3, 0.8, k%2 ? 0xffffff : 0xff3b6b, x, -27 + k*3, z, L).castShadow = false;
+  const lm = new THREE.MeshBasicMaterial({color: z % 16 === 0 ? 0xff8ad8 : 0x7ff0ff});
+  box(1.2, 1.2, 1.2, 0, x, 3.6, z, L, lm);
+}
+function giantLollipop(L, x, y, z, r, color){
+  box(0.6, 14, 0.6, 0xffffff, x, y - 7, z, L);
+  const d = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, 32), new THREE.MeshLambertMaterial({map:swirlTexture(color)}));
+  d.rotation.x = Math.PI/2; d.position.set(x, y + r*0.2, z); L.add(d);
+}
+let swirlCache = {};
+function swirlTexture(color){
+  if (swirlCache[color]) return swirlCache[color];
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0,0,128,128); g.strokeStyle = '#' + color.toString(16).padStart(6,'0'); g.lineWidth = 12; g.beginPath();
+  for (let a=0;a<Math.PI*8;a+=0.1){ const r = a*2.4; g.lineTo(64 + Math.cos(a)*r, 64 + Math.sin(a)*r); } g.stroke();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return swirlCache[color] = t;
+}
+function giantCake(L, x, top, z){
+  const layer = (r, h, y, col) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 32), mat(col)); m.position.set(x, y, z); m.castShadow = true; L.add(m); return m; };
+  layer(7, 4, top + 2, 0xffd1f0); layer(7.2, 0.6, top + 4.2, 0xffffff);
+  layer(5, 3.5, top + 6.2, 0xb07cff); layer(5.2, 0.6, top + 8.1, 0xffffff);
+  layer(3, 3, top + 9.9, 0x7ff0c8); layer(3.2, 0.5, top + 11.6, 0xffffff);
+  for (let i=0;i<6;i++){ const a = i/6*Math.PI*2; box(0.3, 1.4, 0.3, [0xff5fa2,0xffd23f,0x3fd4ff][i%3], x + Math.cos(a)*2, top + 12.5, z + Math.sin(a)*2, L);
+    box(0.25, 0.35, 0.25, 0, x + Math.cos(a)*2, top + 13.4, z + Math.sin(a)*2, L, new THREE.MeshBasicMaterial({color:0xffb020})); }
+  const st = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshBasicMaterial({map:textTexture('★', '#ffd23f', null, 128, 128, 'bold 120px sans-serif'), transparent:true, fog:false}));
+  st.position.set(x, top + 16, z); L.add(st);
+  for (let i=0;i<10;i++) box(0.4, 0.4, 0.4, [0xff5fa2,0xffd23f,0x3fd4ff,0x7ff0c8][i%4], x + (Math.random()-0.5)*12, top + 4.6, z + 6.6 + Math.random()*0.5, L);
+}
+
+// ======================= LEVEL 1: Gumdrop Hop 軟糖跳跳 =======================
 function buildLevel1(){
-  scene.background = new THREE.Color(0x8fd3ff); scene.fog = new THREE.Fog(0x8fd3ff, 60, 170);
+  scene.background = new THREE.Color(0xcdeeff); scene.fog = new THREE.Fog(0xcdeeff, 60, 170);
   hemi.intensity = 1.6; sun.intensity = 2.2; deathY = -2.2;
   const L = levelGroup;
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshLambertMaterial({color:0x2f8fe0}));
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshLambertMaterial({color:0x3fd4e0}));
+  addClouds(L, 0, 14, -40);
   water.rotation.x = -Math.PI/2; water.position.set(0, -2.6, -40); water.receiveShadow = true; L.add(water);
   // side islands with blocky trees
   for (let i=0;i<8;i++){
     const side = i%2 ? 1 : -1, x = side*(14 + Math.random()*6), z = 5 - i*9;
-    box(6, 2, 6, 0x7bd35a, x, -2, z, L);
-    box(0.8, 3, 0.8, 0x7a4a26, x, 0.5, z, L); box(2.6, 2.4, 2.6, 0x2fa84f, x, 3, z, L);
+    box(6, 2, 6, [0xffd1f0,0xc8f7e1,0xfff1a8][i%3], x, -2, z, L);
+    box(0.4, 3.4, 0.4, 0xffffff, x, 0.7, z, L);                   // lollipop tree
+    const pop = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 0.4, 20), mat([0xff5fa2,0x7b5cff,0x3fd4ff,0xffb020][i%4]));
+    pop.rotation.x = Math.PI/2; pop.position.set(x, 3.4, z); L.add(pop);
+    box(1.6, 0.3, 0.42, 0xffffff, x, 3.4, z, L).rotation.z = 0.6;
   }
   addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
   // hopscotch grid 1..8 (single, double, single, double…)
@@ -560,7 +708,7 @@ function buildLevel1(){
   addPickup(L, -1.8, 0, -31);
   // stepping stones
   const stones = [[-2,-37,0.3],[1.5,-41,0.6],[-1,-45,0.9],[2.5,-49,1.2],[0,-53,1.5],[-2.5,-57,1.8],[0,-61,2.1]];
-  stones.forEach(([x,z,y],i) => addDisc(L, x, y, z, 1.4, i%2 ? 0xbfa58a : 0xa98c70));
+  stones.forEach(([x,z,y],i) => addDisc(L, x, y, z, 1.4, [0xff8ad8,0x7ff0c8,0xffd23f,0xb07cff][i%4]));  // gumdrops
   addPlatform(L, 0, 2.4, -66.5, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, 1.8, 2.4, -66.5);
   // two slow moving stones
@@ -572,9 +720,10 @@ function buildLevel1(){
   showMsg(tr('lv')[1] + '<small>' + tr('tip')[1] + '</small>', 2600, '#fff');
 }
 
-// ======================= LEVEL 2: 玻璃橋 =======================
+// ======================= LEVEL 2: Crystal Sugar Path 冰糖水晶路 =======================
 function buildLevel2(){
-  scene.background = new THREE.Color(0x0d1433); scene.fog = new THREE.Fog(0x0d1433, 35, 110);
+  scene.background = new THREE.Color(0x24124f); scene.fog = new THREE.Fog(0x24124f, 35, 110);
+  addStars(levelGroup);
   hemi.intensity = 1.2; sun.intensity = 1.8; deathY = -14;
   const L = levelGroup;
   addPlatform(L, 0, 0, 0, 9, 8, 0x3a3f5c);
@@ -588,14 +737,14 @@ function buildLevel2(){
   addPlatform(L, 0, 0, endZ - 4, 9, 8, 0x3a3f5c, {tag:'finish'});
   addFinish(L, 0, 0, endZ - 4);
   [-3, 0, 3].forEach(x => box(0.35, 0.35, Math.abs(endZ), 0x8a8f9c, x, -0.35, endZ/2, L));
-  box(80, 1, 160, 0x05070f, 0, -40, -30, L);
+  box(80, 1, 160, 0x1a0b3a, 0, -40, -30, L);
   for (let i=0;i<9;i++){
     const z = 4 - i*8;
-    box(0.8, 30, 0.8, 0x222a44, -12, -14, z, L); box(0.8, 30, 0.8, 0x222a44, 12, -14, z, L);
+    candyCane(L, -12, z); candyCane(L, 12, z);
     const lm = new THREE.MeshBasicMaterial({color: i%2 ? 0xff3b8d : 0x3bd0ff});
     box(1.2, 1.2, 1.2, 0, -12, 1.5, z, L, lm); box(1.2, 1.2, 1.2, 0, 12, 1.5, z, L, lm);
   }
-  const glassMat = () => new THREE.MeshPhongMaterial({color:0x9fe8ff, transparent:true, opacity:0.42, shininess:120, specular:0xffffff, emissive:0x10324a});
+  const glassMat = () => new THREE.MeshPhongMaterial({color:0xffc6f0, transparent:true, opacity:0.42, shininess:120, specular:0xffffff, emissive:0x10324a});
   for (let i=0;i<ROWS;i++){
     const z = rowZ(i), safeSide = Math.random() < 0.5 ? 0 : 1, row = [];
     for (let s=0;s<2;s++){
@@ -625,15 +774,15 @@ function buildLevel2(){
   showMsg(tr('lv')[2] + '<small>' + tr('tip')[2] + '</small>', 2600, '#9fe8ff');
 }
 
-// ======================= LEVEL 3: 椪糖跳台 =======================
+// ======================= LEVEL 3: Lollipop Spin 棒棒糖轉轉 =======================
 function buildLevel3(){
   scene.background = new THREE.Color(0xffc9e3); scene.fog = new THREE.Fog(0xffc9e3, 50, 150);
   hemi.intensity = 1.7; sun.intensity = 2.2; deathY = -14;
   const L = levelGroup;
-  box(200, 1, 220, 0xff7fb6, 0, -20, -50, L);
+  box(200, 1, 220, 0xffb3dd, 0, -20, -50, L);
   addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
   addPlatform(L, 0, 0, -7, 3.4, 3.4, 0xffd23f, {move:{ax:1.5, spd:0.7}});
-  addDisc(L, 0, 0.5, -12.5, 3.2, 0xd9962e);
+  addDisc(L, 0, 0.5, -12.5, 3.2, 0xff5fa2);
   addSweeper(L, 0, 0.5, -12.5, 6, 0.9);
   addPlatform(L, 0, 0.5, -19.5, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, 1.8, 0.5, -19.5);
@@ -647,30 +796,32 @@ function buildLevel3(){
   addPlatform(L, 0, 2, -55.5, 3.4, 3.4, 0xffd23f, {move:{az:0.8, spd:0.6}});
   addPlatform(L, 0, 2.5, -61.5, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, 1.8, 2.5, -61.5);
-  addDisc(L, 0, 3, -68.5, 3, 0xd9962e, 0.4);
+  addDisc(L, 0, 3, -68.5, 3, 0x7b5cff, 0.4);
   addSweeper(L, 0, 3, -68.5, 5.6, -0.8);
   addPlatform(L, 0, 3, -77, 8, 8, 0xffd23f, {tag:'finish'});
   addFinish(L, 0, 3, -77);
-  const ck = new THREE.Mesh(new THREE.CylinderGeometry(6,6,0.6,32), mat(0xd9962e)); ck.position.set(0, 10, -85); ck.rotation.x = Math.PI/2; L.add(ck);
-  const um = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.MeshBasicMaterial({map:textTexture('☂','#7a4a10',null,128,128,'bold 110px sans-serif'),transparent:true}));
-  um.position.set(0, 10, -84.6); L.add(um);
+  giantLollipop(L, 0, 4, -86, 6, 0xff5fa2); giantLollipop(L, -14, -6, -40, 5, 0x7b5cff); giantLollipop(L, 14, -6, -60, 5, 0x3fd4ff);
+  addClouds(L, 0, 12, -40);
   player.spawn.set(0, 0, 1);
   showMsg(tr('lv')[3] + '<small>' + tr('tip')[3] + '</small>', 2600, '#fff');
 }
 
-// ======================= LEVEL 4: 彈珠迴旋 =======================
+// ======================= LEVEL 4: Donut Whirl 甜甜圈漩渦 =======================
 function buildLevel4(){
-  scene.background = new THREE.Color(0xffb46b); scene.fog = new THREE.Fog(0xffb46b, 45, 140);
+  scene.background = new THREE.Color(0xffc48a); scene.fog = new THREE.Fog(0xffc48a, 45, 140);
   hemi.intensity = 1.5; sun.intensity = 2.0; deathY = -14;
   const L = levelGroup;
-  box(200, 1, 220, 0x6b4a3a, 0, -20, -50, L);
-  const marbleCols = [0xff3b5c, 0x3bd0ff, 0x1ec95a, 0xffd23f, 0xb07cff];
-  for (let i=0;i<14;i++){
-    const m = new THREE.Mesh(new THREE.SphereGeometry(1.5 + Math.random()*2, 16, 12), new THREE.MeshPhongMaterial({color:marbleCols[i%5], shininess:90, transparent:true, opacity:0.85}));
-    m.position.set((i%2 ? 1 : -1)*(10 + Math.random()*12), -18, 8 - i*7); L.add(m);
+  box(200, 1, 220, 0xffd9a8, 0, -20, -50, L);
+  const icing = [0xff8ad8, 0x7b3f1f, 0xfff1a8, 0x7ff0c8, 0xb07cff];
+  for (let i=0;i<12;i++){ // floating donuts
+    const r = 1.6 + Math.random()*1.4, d = new THREE.Group(); d.position.set((i%2 ? 1 : -1)*(10 + Math.random()*10), -6 + Math.random()*8, 8 - i*8); L.add(d);
+    const dough = new THREE.Mesh(new THREE.TorusGeometry(r, r*0.45, 10, 24), mat(0xe0a060)); d.add(dough);
+    const top = new THREE.Mesh(new THREE.TorusGeometry(r, r*0.47, 10, 24, Math.PI*2), mat(icing[i%5])); top.scale.z = 0.55; top.position.z = r*0.12; d.add(top);
+    d.rotation.set(-1.1 + Math.random()*0.4, Math.random(), 0);
   }
+  addClouds(L, 0, 10, -40);
   addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
-  addDisc(L, 0, 0.5, -7.5, 2.6, 0xff3b5c, 0.5);
+  addDisc(L, 0, 0.5, -7.5, 2.6, 0xff8ad8, 0.5);
   addPlatform(L, 0, 1, -13.5, 3.4, 3.4, 0xffd23f, {move:{ax:1.8, spd:0.7}});
   addPlatform(L, 0, 1, -19.5, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, 1.8, 1, -19.5);
@@ -693,17 +844,15 @@ function buildLevel4(){
   showMsg(tr('lv')[4] + '<small>' + tr('tip')[4] + '</small>', 2600, '#fff');
 }
 
-// ======================= LEVEL 5: 魷魚決戰 =======================
+// ======================= LEVEL 5: Cake Summit 蛋糕之巔 =======================
 function buildLevel5(){
-  scene.background = new THREE.Color(0x1a0a1f); scene.fog = new THREE.Fog(0x1a0a1f, 40, 130);
+  scene.background = new THREE.Color(0x1b1450); scene.fog = new THREE.Fog(0x1b1450, 40, 140);
+  addStars(levelGroup);
   hemi.intensity = 1.3; sun.intensity = 1.9; deathY = -14;
   const L = levelGroup;
-  box(200, 1, 220, 0x3a0a14, 0, -20, -50, L);
-  const neon = (txt, col, x, y, z, s) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(s, s), new THREE.MeshBasicMaterial({map:textTexture(txt, col, null, 128, 128, 'bold 110px sans-serif'), transparent:true, fog:false})); p.position.set(x, y, z); L.add(p); };
-  neon('○', '#ff3b8d', -16, 8, -30, 14); neon('△', '#3bd0ff', 16, 8, -55, 14); neon('□', '#ffd23f', -16, 8, -80, 14);
-  { const p = new THREE.Mesh(new THREE.PlaneGeometry(22, 22), addSign(new THREE.MeshBasicMaterial({transparent:true, fog:false}), 'prize', '#ffd23f', null, 128, 128, 'bold 30px sans-serif')); p.position.set(0, 12, -108); L.add(p); }
+  box(200, 1, 220, 0x2a1d6e, 0, -20, -50, L);
   addPlatform(L, 0, 0, 0, 8, 8, 0x8a6bd1);
-  addPlatform(L, 0, 0, -7, 3.4, 3.4, 0xe8336d, {move:{ax:1.8, spd:0.8}});
+  addPlatform(L, 0, 0, -7, 3.4, 3.4, 0xff7ac6, {move:{ax:1.8, spd:0.8}});
   addDisc(L, 0, 0.5, -12.5, 2.6, 0x3bd0ff, 0.6);
   addPlatform(L, 0, 1, -19, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, 1.8, 1, -19);
@@ -712,7 +861,7 @@ function buildLevel5(){
   addSweeper(L, 0, 1, -31, 3.8, -1.1, 0x3b5bff);
   addPlatform(L, 0, 1.5, -38, 6, 5, 0x1ec95a, {tag:'check'});
   addPickup(L, -1.8, 1.5, -38);
-  addDisc(L, 0, 2, -45.5, 3.4, 0xe8336d, 0.5);
+  addDisc(L, 0, 2, -45.5, 3.4, 0xff7ac6, 0.5);
   addSweeper(L, 0, 2, -45.5, 6.4, 0.8, 0xffd23f, 0);
   addSweeper(L, 0, 2, -45.5, 6.4, 0.8, 0xffd23f, Math.PI/2);
   addPlatform(L, 0, 2.5, -52, 3.4, 3.4, 0xb07cff, {move:{az:0.8, spd:0.6}});
@@ -727,9 +876,7 @@ function buildLevel5(){
   addSweeper(L, 0, 4, -86, 3.8, -1.1, 0x3b5bff);
   addPlatform(L, 0, 4, -93, 8, 8, 0xffd23f, {tag:'finish'});
   addFinish(L, 0, 4, -93);
-  const pig = new THREE.Group(); pig.position.set(0, 4, -96); L.add(pig);
-  box(3, 2.2, 2, 0xffc0d8, 0, 1.6, 0, pig); box(1, 0.8, 0.6, 0xff9fc0, 0, 1.5, 1.2, pig); box(1.6, 0.2, 0.4, 0xffd23f, 0, 2.75, 0, pig);
-  [[-1,-0.6],[1,-0.6],[-1,0.6],[1,0.6]].forEach(([x,z]) => box(0.5, 0.6, 0.5, 0xffc0d8, x, 0.3, z, pig));
+  giantCake(L, 0, 4, -104);
   player.spawn.set(0, 0, 1);
   showMsg(tr('lv')[5] + '<small>' + tr('tip')[5] + '</small>', 2600, '#ff3b8d');
 }
@@ -823,20 +970,6 @@ function startGame(level=1){
   loadLevel(level);
 }
 let previews = null;
-function makePreviews(){
-  const out = {};
-  try {
-    const r = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
-    r.setSize(240, 280); r.setPixelRatio(1);
-    const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
-    const dl = new THREE.DirectionalLight(0xffffff, 2); dl.position.set(3, 5, 4); sc.add(dl);
-    const cam = new THREE.PerspectiveCamera(35, 240/280, 0.1, 50); cam.position.set(0, 2.1, 6.2); cam.lookAt(0, 1.55, 0);
-    for (const k in CHARS){ const a = makeAvatar(CHARS[k].look); a.rotation.y = 0.45; a.userData.armR.rotation.x = -0.5; a.userData.legL.rotation.x = 0.3; a.userData.legR.rotation.x = -0.3;
-      sc.add(a); r.render(sc, cam); out[k] = r.domElement.toDataURL('image/png'); sc.remove(a); }
-    r.dispose(); r.forceContextLoss && r.forceContextLoss();
-  } catch(e){ }
-  return out;
-}
 function stars(n){ return `<span class="bar"><i style="width:${n*20}%"></i></span>`; }
 function showCharSelect(){
   G.state = 'menu';
@@ -974,6 +1107,139 @@ function frame(now){
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
+
+// ---------- avatar thumbnails (one temporary WebGL context) ----------
+function renderLooks(looks, w=240, h=280){
+  const out = {};
+  try {
+    const r = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
+    r.setSize(w, h); r.setPixelRatio(1);
+    const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
+    const dl = new THREE.DirectionalLight(0xffffff, 2); dl.position.set(3, 5, 4); sc.add(dl);
+    const cam = new THREE.PerspectiveCamera(35, w/h, 0.1, 50); cam.position.set(0, 2.15, 6.4); cam.lookAt(0, 1.6, 0);
+    for (const k in looks){ const a = makeAvatar(looks[k]); a.rotation.y = 0.45; a.userData.armR.rotation.x = -0.5; a.userData.legL.rotation.x = 0.3; a.userData.legR.rotation.x = -0.3;
+      sc.add(a); r.render(sc, cam); out[k] = r.domElement.toDataURL('image/png'); sc.remove(a); }
+    r.dispose(); r.forceContextLoss && r.forceContextLoss();
+  } catch(e){ }
+  return out;
+}
+function makePreviews(){ const looks = {}; for (const k in CHARS) looks[k] = CHARS[k].look; return renderLooks(looks); }
+
+// ---------- shop (Lemon Squeezy) ----------
+const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
+const isPlaceholder = u => !u || /TODO/i.test(u) || !/^https:\/\//.test(u);
+let shopThumbs = null, shopThumbsChar = null;
+function deviceId(){ let d = store.get('device', null); if (!d){ d = Math.random().toString(36).slice(2, 10); store.set('device', d); } return d; }
+function showShop(from){
+  if (PORTAL) return;
+  showShop.from = from || 'start';
+  if (!shopThumbs || shopThumbsChar !== charKey){
+    const looks = {}; for (const k in SKINS) looks[k] = Object.assign({}, CHARS[charKey].look, SKINS[k].look);
+    shopThumbs = renderLooks(looks, 150, 175); shopThumbsChar = charKey;
+  }
+  renderShop();
+  ['startScreen','winScreen','charScreen'].forEach(id => $(id).classList.add('hidden'));
+  $('shopScreen').classList.remove('hidden'); $('shopScreen').scrollTop = 0;
+}
+function closeShop(){
+  $('shopScreen').classList.add('hidden');
+  $(showShop.from === 'win' ? 'winScreen' : 'startScreen').classList.remove('hidden');
+}
+function renderShop(){
+  const P = CONFIG.lemonSqueezy.packs;
+  $('packs').innerHTML = Object.keys(PACKS).map(id => {
+    const owned = unlockedPacks.has(id), soon = isPlaceholder(P[id].checkoutUrl);
+    const imgs = PACKS[id].skins.map(s => shopThumbs[s] ? `<img src="${shopThumbs[s]}" alt="">` : '').join('');
+    const btn = owned ? `<button class="btn small owned" disabled>${tr('owned')}</button>`
+      : soon ? `<button class="btn small soon" disabled>${tr('soon')}</button>`
+      : `<button class="btn small buy" data-buy="${id}">${tr('buy')} ${P[id].price}</button>`;
+    return `<div class="pack ${id === 'supporter' ? 'sup' : ''}" data-pack="${id}"><div class="pimgs">${imgs}</div><h3>${tr('packs')[id]}</h3>
+      <div class="pdesc">${tr('packDesc')[id]}</div><div class="price">${P[id].price}</div>${btn}</div>`;
+  }).join('');
+  $('skinsRow').innerHTML = Object.keys(SKINS).map(k => {
+    const ok = skinUnlocked(k), on = k === equippedSkin;
+    return `<div class="skin ${ok ? '' : 'lockedSkin'} ${on ? 'on' : ''}" data-skin="${k}">${shopThumbs[k] ? `<img src="${shopThumbs[k]}" alt="">` : ''}
+      <div class="sname">${tr('skins')[k]}</div><div class="sbtn">${on ? tr('equipped') : ok ? tr('equip') : tr('locked')}</div></div>`;
+  }).join('');
+  $('packs').querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => {
+    const url = P[b.dataset.buy].checkoutUrl; if (!isPlaceholder(url)) window.open(url, '_blank', 'noopener');
+  }));
+  $('skinsRow').querySelectorAll('.skin').forEach(e => e.addEventListener('click', () => {
+    const k = e.dataset.skin; if (!skinUnlocked(k)) return;
+    equippedSkin = k; store.set('skin', k); setCharacter(charKey); renderShop();
+  }));
+}
+function licStatus(msg, ok){ const e = $('licStatus'); e.textContent = msg; e.style.color = ok === true ? '#5dff8f' : ok === false ? '#ff8a8a' : '#fff'; }
+function packsForMeta(meta){
+  const P = CONFIG.lemonSqueezy.packs, found = new Set();
+  for (const id in P){
+    const p = P[id];
+    if ((p.productIds || []).map(Number).includes(Number(meta.product_id)) || (p.variantIds || []).map(Number).includes(Number(meta.variant_id))){
+      found.add(id); (PACKS[id].includes || []).forEach(x => found.add(x));
+    }
+  }
+  return [...found];
+}
+async function redeemLicense(raw){
+  const key = (raw || '').trim();
+  if (!key) return;
+  const lic = store.get('licenses', []);
+  if (lic.some(l => l.key === key)){ licStatus(tr('licDup'), false); return; }
+  licStatus(tr('checking'));
+  let j;
+  try {
+    const body = new URLSearchParams({license_key: key, instance_name: 'Candy Cloud Dash ' + deviceId()});
+    const r = await fetch(LS_API + '/activate', {method:'POST', headers:{Accept:'application/json'}, body});
+    j = await r.json();
+  } catch(e){ licStatus(tr('licNet'), false); return; }
+  if (!j || !j.activated){
+    const err = (j && j.error) || '';
+    licStatus(/limit/i.test(err) ? tr('licLimit') : tr('licBad'), false); return;
+  }
+  const meta = j.meta || {}, st = j.license_key && j.license_key.status;
+  if (st && !['active', 'inactive'].includes(st)){ licStatus(tr('licInactive'), false); return; }
+  const sid = CONFIG.lemonSqueezy.storeId;
+  if (sid && Number(meta.store_id) !== Number(sid)){ licStatus(tr('licWrong'), false); return; }
+  const packs = packsForMeta(meta);
+  if (!packs.length){ licStatus(tr('licWrong'), false); return; }
+  packs.forEach(p => unlockedPacks.add(p)); store.set('unlocked', [...unlockedPacks]);
+  lic.push({key, instanceId: j.instance && j.instance.id, packs, product: meta.product_name, at: Date.now()}); store.set('licenses', lic);
+  const first = PACKS[packs.includes('supporter') ? 'supporter' : packs[0]].skins[0];
+  equippedSkin = first; store.set('skin', first); setCharacter(charKey);
+  sfx.win && initAudio(); sfx.win();
+  licStatus(tr('licOk', packs.map(p => tr('packs')[p]).join(', ')), true); $('licInput').value = '';
+  renderShop(); updateBadge();
+}
+function updateBadge(){ $('supBadge').classList.toggle('hidden', PORTAL || !isSupporter()); }
+// drag-to-scroll for the shop (page-level touch scrolling is disabled for gameplay)
+(function(){
+  const el = $('shopScreen'); let id = null, y0 = 0, s0 = 0, moved = false;
+  el.addEventListener('pointerdown', e => { if (e.target.closest('input')) return; id = e.pointerId; y0 = e.clientY; s0 = el.scrollTop; moved = false; });
+  el.addEventListener('pointermove', e => { if (e.pointerId !== id) return; const dy = e.clientY - y0; if (Math.abs(dy) > 6) moved = true; el.scrollTop = s0 - dy; });
+  const end = e => { if (e.pointerId === id) id = null; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  el.addEventListener('click', e => { if (moved){ e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+})();
+$('licBtn').addEventListener('click', () => redeemLicense($('licInput').value));
+$('licInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') redeemLicense($('licInput').value); });
+$('licInput').addEventListener('keyup', e => e.stopPropagation());
+$('shopBack').addEventListener('click', closeShop);
+$('shopBtn').addEventListener('click', () => showShop('start'));
+$('shopBtnWin').addEventListener('click', () => showShop('win'));
+// ---------- share (Web Share API → clipboard fallback) ----------
+async function shareResult(){
+  const tm = lastWin ? tr('timeFmt', lastWin[0], lastWin[1]) : '';
+  const url = PORTAL ? (document.referrer || location.href) : CONFIG.gameUrl;
+  const text = tr('shareText', tm);
+  try { if (navigator.share){ await navigator.share({title: 'Candy Cloud Dash', text, url}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+  const full = text + ' ' + url;
+  try { await navigator.clipboard.writeText(full); popText(tr('copied'), '#5dff8f'); return; } catch(e){}
+  window.prompt(tr('copied'), full);
+}
+$('shareBtn').addEventListener('click', shareResult);
+window.__game.shop = {showShop, redeemLicense, config: CONFIG, unlocked: () => [...unlockedPacks], skin: () => equippedSkin, portal: PORTAL, shareResult};
+if (PORTAL) document.querySelectorAll('.shopOnly').forEach(e => e.classList.add('hidden'));
+updateBadge();
 
 $('langBtn').addEventListener('click', () => setLang(LANG === 'en' ? 'zh' : 'en'));
 applyLang();

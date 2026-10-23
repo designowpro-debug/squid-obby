@@ -1,4 +1,4 @@
-const { chromium } = require('playwright-core');
+const { chromium } = require('/usr/local/lib/pnpm/5/.pnpm/playwright-core@1.59.1/node_modules/playwright-core');
 (async () => {
   const b = await chromium.launch({ executablePath:'/usr/bin/google-chrome', args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
   const errors = []; const S = '/workspace/squid-obby/screenshots/'; const B = 'http://localhost:8765/index.html';
@@ -18,7 +18,7 @@ const { chromium } = require('playwright-core');
   await p.screenshot({path:S+'17-en-hud-ingame.png'});
   // toggle to Chinese in-game
   await p.click('#langBtn'); await p.waitForTimeout(400);
-  console.log('after toggle:', await p.evaluate(() => [document.documentElement.lang, document.getElementById('lvName').textContent, document.getElementById('charName').textContent, document.getElementById('restartTop').textContent, localStorage.getItem('squidObbyLang')]));
+  console.log('after toggle:', await p.evaluate(() => [document.documentElement.lang, document.getElementById('lvName').textContent, document.getElementById('charName').textContent, document.getElementById('restartTop').textContent, localStorage.getItem('ccd.lang')]));
   await p.screenshot({path:S+'18-zh-hud-ingame.png'});
   await p.goto(B); await p.waitForTimeout(1200);
   console.log('reload remembers:', await p.evaluate(() => [document.documentElement.lang, document.querySelector('#startBtn').textContent]));
